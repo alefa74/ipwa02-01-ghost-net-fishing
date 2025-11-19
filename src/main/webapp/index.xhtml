@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Ghost Net Fishing - Nets</title>
+</h:head>
+<h:body>
+    <h2>Geisternetze erfassen</h2>
+
+    <h:form id="netForm">
+        <h:messages globalOnly="true" />
+
+        <h:panelGrid columns="2" cellpadding="5">
+            <h:outputLabel value="Netz Name:" for="name"/>
+            <h:inputText id="name" value="#{netBean.net.name}" required="true"/>
+
+            <h:outputLabel value="Länge:" for="length"/>
+            <h:inputText id="length" value="#{netBean.net.length}" required="true"/>
+        </h:panelGrid>
+
+        <p:commandButton value="Speichern" action="#{netBean.save}" update="netTable netForm" process="@form"/>
+    </h:form>
+
+    <h3>Alle Geisternetze:</h3>
+    <p:dataTable id="netTable" value="#{netBean.allNets}" var="n" paginator="true" rows="10">
+        <p:column headerText="ID">#{n.id}</p:column>
+        <p:column headerText="Name">#{n.name}</p:column>
+        <p:column headerText="Länge">#{n.length}</p:column>
+    </p:dataTable>
+</h:body>
+</html>

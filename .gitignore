@@ -1,0 +1,25 @@
+# Maven build output
+target/
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+
+# IntelliJ IDEA (voor het geval je het ooit gebruikt)
+*.iml
+.idea/
+
+# Java compile output
+*.class
+
+# Logs
+*.log
+
+# Operating system files
+.DS_Store
+
+# Backup files
+*~
+*.swp
+
