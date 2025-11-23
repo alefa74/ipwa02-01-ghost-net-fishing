@@ -1,0 +1,90 @@
+<ui:composition template="/templates/layout.xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">Datenschutz</ui:define>
+
+    <ui:define name="content">
+        <h:outputStylesheet library="css" name="datenschutz.css" />
+
+        <div class="container">
+
+	        <!-- Hauptüberschrift -->
+	        <p:panel header="Datenschutz" toggleable="false" styleClass="datenschutz-title">
+	
+	            <!-- Abschnitt I -->
+	            <p:panel header="I. Informationen über die Verarbeitung Ihrer Daten gemäß Art. 13 DS-GVO" toggleable="true" styleClass="datenschutz-panel">
+	
+	                <!-- 1. Verantwortlicher und Datenschutzbeauftragter -->
+	                <p:panel header="1. Verantwortlicher und Datenschutzbeauftragter" toggleable="true" styleClass="datenschutz-subpanel">
+	                    <h:panelGroup layout="block">GoNeFi GmbH</h:panelGroup>
+	                    <h:panelGroup layout="block">Alexandra Mustermann</h:panelGroup>
+	                    <h:panelGroup layout="block">Musterstraße 1</h:panelGroup>
+	                    <h:panelGroup layout="block">12345 Musterstadt</h:panelGroup>
+	                    <h:panelGroup layout="block">Deutschland</h:panelGroup>
+	                    <h:panelGroup layout="block">
+	                        Den Datenschutzbeauftragten erreichen Sie per E-Mail unter 
+	                        <h:outputLink value="mailto:info@gonefi.de">info@gonefi.de</h:outputLink>
+	                        oder über die Adresse Musterstraße 1, 12345 Musterstadt.
+	                    </h:panelGroup>
+	                </p:panel>
+	
+	                <!-- 2. Datenverarbeitung -->
+	                <p:panel header="2. Daten, die für die Bereitstellung der Website und die Erstellung der Protokolldateien verarbeitet werden" toggleable="true" styleClass="datenschutz-subpanel">
+	
+	                    <h:panelGroup layout="block" style="font-weight:bold;">a. Welche Daten werden für welchen Zweck verarbeitet?</h:panelGroup>
+	                    <h:panelGroup layout="block">Bei jedem Zugriff auf Inhalte der Website werden temporär folgende Daten gespeichert:</h:panelGroup>
+	                    <ul>
+	                        <li>Datum und Uhrzeit des Zugriffs</li>
+	                        <li>IP-Adresse</li>
+	                        <li>Hostname des zugreifenden Rechners</li>
+	                        <li>Website, von der aus die Website aufgerufen wurde</li>
+	                        <li>Websites, die über die Website aufgerufen werden</li>
+	                        <li>Besuchte Seite auf unserer Website</li>
+	                        <li>Meldung, ob der Abruf erfolgreich war</li>
+	                        <li>Übertragene Datenmenge</li>
+	                        <li>Informationen über den Browsertyp und die verwendete Version</li>
+	                        <li>Betriebssystem</li>
+	                    </ul>
+	                    <h:panelGroup layout="block">Diese Speicherung ist notwendig, um die Funktionsfähigkeit und Sicherheit der Website zu gewährleisten.</h:panelGroup>
+	
+	                    <h:panelGroup layout="block" style="font-weight:bold;">b. Rechtsgrundlage</h:panelGroup>
+	                    <h:panelGroup layout="block">Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 Buchstabe f DS-GVO.</h:panelGroup>
+	
+	                    <h:panelGroup layout="block" style="font-weight:bold;">c. Weitere Empfänger</h:panelGroup>
+	                    <h:panelGroup layout="block">Die Website wird bei Alexandra Mustermann, Musterstraße 1, 12345 Musterstadt gehostet. Der Hoster empfängt die oben genannten Daten als Auftragsverarbeiter.</h:panelGroup>
+	
+	                    <h:panelGroup layout="block" style="font-weight:bold;">d. Speicherdauer</h:panelGroup>
+	                    <h:panelGroup layout="block">Die Daten werden gelöscht, sobald sie für den Zweck ihrer Erhebung nicht mehr erforderlich sind. Protokolldateien werden maximal 24 Stunden aufbewahrt und anschließend endgültig gelöscht.</h:panelGroup>
+	
+	                </p:panel>
+	
+	                <!-- 3. Betroffenenrechte -->
+	                <p:panel header="3. Betroffenenrechte" toggleable="true" styleClass="datenschutz-subpanel">
+	                    <ul>
+	                        <li><strong>Auskunft:</strong> Sie können nach Art. 15 DS-GVO Auskunft über Ihre personenbezogenen Daten verlangen.</li>
+	                        <li><strong>Widerspruch:</strong> Sie haben das Recht auf Widerspruch gemäß Punkt II.</li>
+	                        <li><strong>Berichtigung:</strong> Nach Art. 16 DS-GVO können Sie unrichtige Angaben berichtigen lassen.</li>
+	                        <li><strong>Löschung:</strong> Sie können nach Art. 17 DS-GVO die Löschung Ihrer Daten verlangen.</li>
+	                        <li><strong>Einschränkung:</strong> Nach Art. 18 DS-GVO können Sie eine Einschränkung der Verarbeitung verlangen.</li>
+	                        <li><strong>Beschwerde:</strong> Sie können sich bei der zuständigen Aufsichtsbehörde beschweren: 
+	                            <h:outputLink value="https://www.ldi.nrw.de/kontakt/ihre-beschwerde">
+	                                Landesbeauftragte für Datenschutz NRW
+	                            </h:outputLink>
+	                        </li>
+	                    </ul>
+	                </p:panel>
+	
+	            </p:panel>
+	
+	            <!-- Abschnitt II -->
+	            <p:panel header="II. Recht auf Widerspruch gemäß Art. 21 Abs. 1 DS-GVO" toggleable="true" styleClass="datenschutz-panel">
+	                <h:panelGroup layout="block">Sie haben das Recht, aus Gründen, die sich aus Ihrer besonderen Situation ergeben, jederzeit gegen die Verarbeitung Ihrer personenbezogenen Daten Widerspruch einzulegen. Der Verantwortliche verarbeitet die Daten dann nur weiter, wenn zwingende schutzwürdige Gründe vorliegen oder sie der Geltendmachung von Rechtsansprüchen dienen.</h:panelGroup>
+	            </p:panel>
+	
+	        </p:panel>
+
+		</div>
+    </ui:define>
+</ui:composition>

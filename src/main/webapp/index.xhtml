@@ -1,32 +1,75 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
-<h:head>
-    <title>Ghost Net Fishing - Nets</title>
-</h:head>
-<h:body>
-    <h2>Geisternetze erfassen</h2>
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <h:form id="netForm">
-        <h:messages globalOnly="true" />
+    <ui:define name="title">Startseite</ui:define>
 
-        <h:panelGrid columns="2" cellpadding="5">
-            <h:outputLabel value="Netz Name:" for="name"/>
-            <h:inputText id="name" value="#{netBean.net.name}" required="true"/>
+    <ui:define name="content">
 
-            <h:outputLabel value="Länge:" for="length"/>
-            <h:inputText id="length" value="#{netBean.net.length}" required="true"/>
-        </h:panelGrid>
+        <div class="home-container">
 
-        <p:commandButton value="Speichern" action="#{netBean.save}" update="netTable netForm" process="@form"/>
-    </h:form>
+            <!-- Willkommen Überschrift -->
+            <h2 class="home-title">Willkommen bei Ghost Net Fishing</h2>
 
-    <h3>Alle Geisternetze:</h3>
-    <p:dataTable id="netTable" value="#{netBean.allNets}" var="n" paginator="true" rows="10">
-        <p:column headerText="ID">#{n.id}</p:column>
-        <p:column headerText="Name">#{n.name}</p:column>
-        <p:column headerText="Länge">#{n.length}</p:column>
-    </p:dataTable>
-</h:body>
-</html>
+            <!-- Einleitungstext -->
+            <p class="home-intro">
+                Jedes Jahr gehen weltweit Hunderttausende von Fischernetzen verloren oder werden zurückgelassen. 
+                Diese <strong>Geisternetze</strong> töten Millionen von Meerestieren und machen ca. 10 % des 
+                Plastikmülls in den Ozeanen aus. Mit dieser Plattform wollen wir gemeinsam etwas dagegen tun!
+            </p>
+
+            <!-- Was kannst du hier tun? -->
+            <h3 class="home-section-title">Was kannst du hier tun?</h3>
+
+			<h:form>
+				<div class="home-actions-grid">
+				
+				    <!-- 1. Geisternetz melden -->
+				    <p:button outcome="/newnets"
+				              styleClass="ui-button-primary"
+				              icon="pi pi-plus-circle"
+				              iconPos="left"
+				              value="Geisternet melden (anonym möglich)"/>
+				    <!-- 2. Zu bergende Geisternetze ansehen -->
+				    <p:button outcome="/newnets"
+				              styleClass="ui-button-success"
+				              icon="pi pi-search"
+				              iconPos="left"
+				              value="Zu bergende Geisternetze ansehen"/>
+				
+				    <!-- 3. Mich für die Bergung eintragen -->
+				    <p:button outcome="/newnets"
+				              styleClass="ui-button-info"
+				              icon="pi pi-user-plus"
+				              iconPos="left"
+				              value="Mich für die Bergung eintragen"/>
+				
+				    <!-- 4. Geisternetz als geborgen melden -->
+				    <p:button outcome="/newnets"
+				              styleClass="ui-button-warning"
+				              icon="pi pi-check-circle"
+				              iconPos="left"
+				              value="Geisternetz als geborgen melden"/>
+				
+				    <!-- 5. Geisternetz als verschollen melden -->
+				    <p:button outcome="/newnets"
+				              styleClass="ui-button-danger"
+				              icon="pi pi-times-circle"
+				              iconPos="left"
+				              value="Geisternetz als verschollen melden"/>
+				
+				</div>
+
+			</h:form>
+			
+			<!-- Abschließender Motivationssatz -->
+            <p class="home-footer-text">
+                <strong>Jede Meldung und jede Bergung zählt</strong> –
+                gemeinsam machen wir die Meere ein Stück sauberer! 🌊
+            </p>			
+		</div>
+    </ui:define>
+</ui:composition>

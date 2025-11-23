@@ -1,0 +1,74 @@
+/* ====== BASISLAYOUT ====== */
+html, body {
+	height: 100%;
+	margin: 0;
+}
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	font-family: Arial, Helvetica, sans-serif;
+    background: #f8f9fa;
+}
+
+main {
+	flex: 1;
+	padding: 20px;
+}
+
+/* ==================== STARTSEITE ==================== */
+
+/* Hauptcontainer für die Startseite */
+.home-container {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 3rem 2rem;
+	line-height: 1.7;
+}
+
+/* Überschrift zentriert und in Hausfarbe */
+.home-title {
+	text-align: center;
+	color: #003b6d;
+	margin-bottom: 2rem;
+	font-size: 2.2rem;
+}
+
+/* Einleitungstext */
+.home-intro {
+	font-size: 1.15rem;
+	text-align: justify;
+	margin-bottom: 3rem;
+	color: #333;
+}
+
+/* Abschnittsüberschrift "Was kannst du hier tun?" */
+.home-section-title {
+	text-align: center;
+	color: #003b6d;
+	margin: 4rem 0 2rem;
+	font-size: 1.8rem;
+}
+
+/* Grid für die fünf Buttons */
+.home-actions-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	max-width: 400px;
+	margin: 0 auto;
+}
+
+/* Gestaltung der Home-Aktionsbuttons */
+.home-actions-grid .ui-button {
+	height: 60px;
+}
+
+
+/* Abschlussmotivationssatz */
+.home-footer-text {
+	text-align: center;
+	margin-top: 3rem;
+	color: #555;
+	font-size: 1.1rem;
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:define name="title">Geisternetze erfassen</ui:define>
+
+    <ui:define name="content">
+    
+	    <h2>Geisternetze erfassen</h2>
+	
+	    <h:form id="netForm">
+	        <h:messages globalOnly="true" />
+	
+	        <h:panelGrid columns="2" cellpadding="5">
+	            <h:outputLabel value="Netz Latitude" for="latitude"/>
+	            <h:inputText id="latitude" value="#{netBean.net.latitude}" required="true"/>
+	            <h:outputLabel value="Netz Longitude" for="longitude"/>
+	            <h:inputText id="longitude" value="#{netBean.net.longitude}" required="true"/>
+
+				<h:outputLabel value="Size" for="size"/>
+					<p:selectOneMenu id="size" value="#{netBean.selectedSizeId}" required="true" style="width:150px;">
+				    <f:selectItems value="#{netBean.allSizes}" var="s" itemValue="#{s.id}" itemLabel="#{s.name}" />
+				</p:selectOneMenu>
+
+
+	        </h:panelGrid>
+	
+	        <p:commandButton value="Speichern" icon="pi pi-save" action="#{netBean.save}" update="netTable netForm" process="@form"/>
+	    </h:form>
+	
+	    <h3>Alle Geisternetze:</h3>
+	    <p:dataTable id="netTable" value="#{netBean.allNets}" var="n" paginator="true" rows="10">
+	        <p:column headerText="ID">#{n.id}</p:column>
+	        <p:column headerText="Latitude">#{n.latitude}</p:column>
+	        <p:column headerText="Longitude">#{n.longitude}</p:column>
+    		<p:column headerText="Grootte">#{n.size.name}</p:column>
+    		<p:column headerText="Status">#{n.status.name}</p:column>
+        </p:dataTable>
+    </ui:define>
+</ui:composition>
