@@ -16,14 +16,6 @@ public class InitData {
     @PostConstruct
     public void init() {
 
-        // STATUS
-        if (em.createQuery("SELECT COUNT(s) FROM Status s", Long.class).getSingleResult() == 0) {
-            em.persist(new Status("GEMELDET"));
-            em.persist(new Status("BERGUNG_BEVORSTEHEND"));
-            em.persist(new Status("GEBORGEN"));
-            em.persist(new Status("VERSCHOLLEN"));
-        }
-
         // PERSON TYPE
         if (em.createQuery("SELECT COUNT(p) FROM PersonType p", Long.class).getSingleResult() == 0) {
             em.persist(new PersonType("MELDER"));

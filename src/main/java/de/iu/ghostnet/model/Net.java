@@ -1,6 +1,7 @@
 package de.iu.ghostnet.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.*;
 
@@ -111,5 +112,13 @@ public class Net {
 	public void setLostAt(LocalDateTime lostAt) {
 		this.lostAt = lostAt;
 	}
+	
+	public String getFormattedReportedAt() {
+        if (reportedAt == null) {
+            return "-";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        return reportedAt.format(formatter);
+    }	
 
 }

@@ -16,9 +16,9 @@ public class NetDAO {
     private EntityManager em;
 
     public void save(Net net) {
-        em.getTransaction().begin();
-        em.persist(net);
-        em.getTransaction().commit();
+    	em.getTransaction().begin();
+    	em.persist(net);
+    	em.getTransaction().commit();
     }
 
     public List<Net> findAll() {

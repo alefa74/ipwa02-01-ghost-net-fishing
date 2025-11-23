@@ -9,36 +9,51 @@
     <ui:define name="title">Geisternetze erfassen</ui:define>
 
     <ui:define name="content">
+    	<div class="page-container">
     
-	    <h2>Geisternetze erfassen</h2>
+		    <h2>Geisternetze erfassen</h2>
+		
+		    <h:form id="netForm">
+		        <h:messages globalOnly="true" />
+		
+		        <h:panelGrid columns="2" cellpadding="5" columnClasses="label-column, input-column">
+		            <p:outputLabel value="Netz Latitude" for="latitude"/>
+					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
+                        <p:inputText id="latitude" value="#{netBean.net.latitude}" required="true" requiredMessage="Latitude erforderlich" placeholder="z. B. 52.1234" />
+                        <p:message for="latitude" />
+                    </h:panelGroup>		   
+                             
+		            <p:outputLabel value="Netz Longitude" for="longitude"/>
+					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
+                        <p:inputText id="longitude" value="#{netBean.net.longitude}" required="true" requiredMessage="Longitude erforderlich" placeholder="z. B. 13.5678" />
+                        <p:message for="longitude" />
+                    </h:panelGroup>
 	
-	    <h:form id="netForm">
-	        <h:messages globalOnly="true" />
+					<p:outputLabel value="Size" for="size"/>
+					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
+                        <p:selectOneMenu id="size" value="#{netBean.selectedSizeId}" required="true" requiredMessage="Größe erforderlich">
+                            <f:selectItem itemValue="" itemLabel="Auswählen..." />
+                            <f:selectItems value="#{netBean.allSizes}" var="s" itemValue="#{s.id}" itemLabel="#{s.name}" />
+                        </p:selectOneMenu>
+                        <p:message for="size" />
+                    </h:panelGroup>
 	
-	        <h:panelGrid columns="2" cellpadding="5">
-	            <h:outputLabel value="Netz Latitude" for="latitude"/>
-	            <h:inputText id="latitude" value="#{netBean.net.latitude}" required="true"/>
-	            <h:outputLabel value="Netz Longitude" for="longitude"/>
-	            <h:inputText id="longitude" value="#{netBean.net.longitude}" required="true"/>
-
-				<h:outputLabel value="Size" for="size"/>
-					<p:selectOneMenu id="size" value="#{netBean.selectedSizeId}" required="true" style="width:150px;">
-				    <f:selectItems value="#{netBean.allSizes}" var="s" itemValue="#{s.id}" itemLabel="#{s.name}" />
-				</p:selectOneMenu>
-
-
-	        </h:panelGrid>
-	
-	        <p:commandButton value="Speichern" icon="pi pi-save" action="#{netBean.save}" update="netTable netForm" process="@form"/>
-	    </h:form>
-	
-	    <h3>Alle Geisternetze:</h3>
-	    <p:dataTable id="netTable" value="#{netBean.allNets}" var="n" paginator="true" rows="10">
-	        <p:column headerText="ID">#{n.id}</p:column>
-	        <p:column headerText="Latitude">#{n.latitude}</p:column>
-	        <p:column headerText="Longitude">#{n.longitude}</p:column>
-    		<p:column headerText="Grootte">#{n.size.name}</p:column>
-    		<p:column headerText="Status">#{n.status.name}</p:column>
-        </p:dataTable>
+					<h:outputText />
+					<p:commandButton value="Speichern" icon="pi pi-save" action="#{netBean.save}" update="netTable netForm" process="@form" style="margin-top: 10px;"/>
+		        </h:panelGrid>   
+		    </h:form>
+		
+		    <h3>Alle Geisternetze:</h3>
+		    <p:dataTable id="netTable" value="#{netBean.lazyNets}" var="n" paginator="true" rows="10"
+			    		paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageTemplate}"
+	                    rowsPerPageTemplate="5,10,20,50" emptyMessage="Keine Geisternetze gefunden">
+				<p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
+                <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
+                <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
+                <p:column headerText="Grootte" sortBy="#{n.size.name}">#{n.size.name}</p:column>
+                <p:column headerText="Status" sortBy="#{n.status.name}">#{n.status.name}</p:column>
+                <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
+	        </p:dataTable>
+		</div>
     </ui:define>
 </ui:composition>
