@@ -11,6 +11,8 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -169,6 +171,15 @@ public class NetBean implements Serializable {
     	net.setStatus(statusService.findByName("GEMELDET"));
     	
         netService.save(net);
+        
+    	// Erfolgsmeldung anzeigen
+        FacesContext.getCurrentInstance().addMessage(null, 
+        		new FacesMessage(
+    				FacesMessage.SEVERITY_INFO, 
+    				"Erfolgreich gespeichert", 
+    				"Das Geisternetz wurde erfolgreich erfasst. Danke für Ihre Meldung!"
+        		)
+        	);
         
         net = new Net();
         selectedSizeId = null;

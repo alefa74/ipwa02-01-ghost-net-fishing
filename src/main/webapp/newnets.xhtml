@@ -12,41 +12,69 @@
     	<div class="page-container">
     
 		    <h2>Geisternetze erfassen</h2>
-		
+		    
+			<p:growl id="growl" showDetail="true" showSummary="false" life="3500" />
+			
 		    <h:form id="netForm">
-		        <h:messages globalOnly="true" />
 		
-		        <h:panelGrid columns="2" cellpadding="5" columnClasses="label-column, input-column">
-		            <p:outputLabel value="Netz Latitude" for="latitude"/>
+		        <h:panelGrid columns="3" cellpadding="5" columnClasses="label-column, input-column, error-column">
+		            <p:outputLabel value="Breitengrad" for="latitude"/>
 					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
-                        <p:inputText id="latitude" value="#{netBean.net.latitude}" required="true" requiredMessage="Latitude erforderlich" placeholder="z. B. 52.1234" />
-                        <p:message for="latitude" />
+                        <p:inputText id="latitude" 
+                        			 value="#{netBean.net.latitude}" 
+                        			 required="true" 
+                        			 requiredMessage="Breitengrad erforderlich" 
+                  					 validatorMessage="Breitengrad muss zwischen -90 und +90 liegen."
+                        			 placeholder="z. B. 52.1234">
+                        	<f:validateDoubleRange minimum="-90" maximum="90"/>
+                        </p:inputText>
                     </h:panelGroup>		   
+                    <p:message for="latitude" display="text" showIcon="false" />
                              
-		            <p:outputLabel value="Netz Longitude" for="longitude"/>
+		            <p:outputLabel value="Längengrad" for="longitude"/>
 					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
-                        <p:inputText id="longitude" value="#{netBean.net.longitude}" required="true" requiredMessage="Longitude erforderlich" placeholder="z. B. 13.5678" />
-                        <p:message for="longitude" />
+                        <p:inputText id="longitude" 
+                        			 value="#{netBean.net.longitude}" 
+                        			 required="true" 
+									 requiredMessage="Längengrad erforderlich"
+									 validatorMessage="Längengrad muss zwischen -180 und +180 liegen."
+                        			 placeholder="z. B. 13.5678">
+                        	<f:validateDoubleRange minimum="-180" maximum="180"/>
+                        </p:inputText>
                     </h:panelGroup>
+					<p:message for="longitude" display="text" showIcon="false" />
 	
 					<p:outputLabel value="Size" for="size"/>
 					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
-                        <p:selectOneMenu id="size" value="#{netBean.selectedSizeId}" required="true" requiredMessage="Größe erforderlich">
+                        <p:selectOneMenu id="size" 
+                        				 value="#{netBean.selectedSizeId}" 
+                        				 required="true" 
+                        				 requiredMessage="Größe erforderlich">
                             <f:selectItem itemValue="" itemLabel="Auswählen..." />
                             <f:selectItems value="#{netBean.allSizes}" var="s" itemValue="#{s.id}" itemLabel="#{s.name}" />
                         </p:selectOneMenu>
-                        <p:message for="size" />
                     </h:panelGroup>
+                    <p:message for="size" display="text" showIcon="false" />
 	
 					<h:outputText />
-					<p:commandButton value="Speichern" icon="pi pi-save" action="#{netBean.save}" update="netTable netForm" process="@form" style="margin-top: 10px;"/>
+					<p:commandButton value="Speichern" 
+									 icon="pi pi-save" 
+									 action="#{netBean.save}" 
+									 update="netTable netForm growl" 
+									 process="@form" 
+									 style="margin-top: 10px;"/>
 		        </h:panelGrid>   
 		    </h:form>
 		
 		    <h3>Alle Geisternetze:</h3>
-		    <p:dataTable id="netTable" value="#{netBean.lazyNets}" var="n" paginator="true" rows="10"
-			    		paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageTemplate}"
-	                    rowsPerPageTemplate="5,10,20,50" emptyMessage="Keine Geisternetze gefunden">
+		    <p:dataTable id="netTable" 
+		    			 value="#{netBean.lazyNets}" 
+		    			 var="n" 
+		    			 paginator="true" 
+		    			 rows="10"
+			    		 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageTemplate}"
+	                     rowsPerPageTemplate="5,10,20,50" 
+	                     emptyMessage="Keine Geisternetze gefunden">
 				<p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
                 <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
                 <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>

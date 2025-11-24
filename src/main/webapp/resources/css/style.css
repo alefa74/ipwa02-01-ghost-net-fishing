@@ -26,6 +26,13 @@ main {
     width: auto;
 }
 
+.error-column .ui-message {
+    display: block;
+    max-width: 250px;
+    white-space: normal;
+}
+
+
 .page-container {
     max-width: 1000px;
     margin: 0 auto;
