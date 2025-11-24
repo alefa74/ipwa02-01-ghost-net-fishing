@@ -5,6 +5,8 @@ import de.iu.ghostnet.model.Person;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import java.util.List;
 
 @ApplicationScoped
@@ -20,4 +22,17 @@ public class PersonService {
     public List<Person> getAll() {
         return personDAO.findAll();
     }
+    
+    public Person findById(Long id) {
+        return personDAO.findById(id);
+    }
+    
+    public Person findByDetails(String firstName, String lastName, String phone) {
+        try {
+            return personDAO.findByDetails(firstName, lastName, phone);
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
 }

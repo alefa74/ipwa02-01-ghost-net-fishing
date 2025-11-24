@@ -1,11 +1,15 @@
 package de.iu.ghostnet.web.bean;
 
 import de.iu.ghostnet.model.Net;
+import de.iu.ghostnet.model.Person;
 import de.iu.ghostnet.model.Size;
 import de.iu.ghostnet.model.Status;
+import de.iu.ghostnet.model.PersonType;
 import de.iu.ghostnet.service.NetService;
+import de.iu.ghostnet.service.PersonService;
 import de.iu.ghostnet.service.SizeService;
 import de.iu.ghostnet.service.StatusService;
+import de.iu.ghostnet.service.PersonTypeService;
 
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -33,6 +37,10 @@ public class NetBean implements Serializable {
     private SizeService sizeService;
     @Inject
     private StatusService statusService;
+    @Inject
+    private PersonService personService;
+    @Inject
+    private PersonTypeService personTypeService;
     
     private LazyDataModel<Net> lazyNets;
     
@@ -40,10 +48,16 @@ public class NetBean implements Serializable {
     private Net net = new Net();
     private List<Status> allStatuses;
     private List<Size> allSizes;
+    private List<PersonType> allPersonTypes;
+    
+    private Person reporter = new Person();
+    private boolean anonymous;
+
     
 	@PostConstruct
 	public void init() {
 		allStatuses = statusService.getAllStatuses();
+		allPersonTypes = personTypeService.getAllPersonTypes();
 		loadLazyModel();
 	}
 	
@@ -61,11 +75,28 @@ public class NetBean implements Serializable {
 		this.selectedSizeId = selectedSizeId;
 	}
 
-    public LazyDataModel<Net> getLazyNets() {
+
+	public LazyDataModel<Net> getLazyNets() {
 		return lazyNets;
 	}
 
-    private void loadLazyModel() {
+    public Person getReporter() {
+		return reporter;
+	}
+
+	public void setReporter(Person reporter) {
+		this.reporter = reporter;
+	}
+
+	public boolean isAnonymous() {
+		return anonymous;
+	}
+
+	public void setAnonymous(boolean anonymous) {
+		this.anonymous = anonymous;
+	}
+
+	private void loadLazyModel() {
 
         lazyNets = new LazyDataModel<Net>() {
 
@@ -160,7 +191,7 @@ public class NetBean implements Serializable {
     }
     
 	public String save() {
-    	System.out.println("save called. Id = " + selectedSizeId);
+		System.out.println("save new net");
     	
     	if (selectedSizeId != null) {
     		net.setSize(sizeService.findById(selectedSizeId));
@@ -170,6 +201,26 @@ public class NetBean implements Serializable {
     	
     	net.setStatus(statusService.findByName("GEMELDET"));
     	
+        // Reporter setzen
+		if (anonymous || (reporter == null)) {
+			System.out.println("Reporter is anonymous");
+			net.setReporter(null); 
+		} else {
+			System.out.println("Reporter is " + reporter.getFirstName() + " " + reporter.getLastName());
+			
+			Person existing = personService.findByDetails(reporter.getFirstName(), reporter.getLastName(), reporter.getPhone());
+			
+			if (existing == null) {
+    			System.out.println("Reporter is created");
+    			reporter.setPersonType(personTypeService.findByName("MELDER"));
+				personService.save(reporter); 
+			} else { 
+    			System.out.println("Reporter is found");
+				reporter = existing; 
+			} 
+			net.setReporter(reporter);
+		}
+        
         netService.save(net);
         
     	// Erfolgsmeldung anzeigen
@@ -183,12 +234,17 @@ public class NetBean implements Serializable {
         
         net = new Net();
         selectedSizeId = null;
+        reporter = null;
         
         loadLazyModel();
 
         return null;
     }
 
+	private boolean isEmpty(String value) {
+	    return value == null || value.trim().isEmpty();
+	}
+	
     public List<Net> getAllNets() {
         return netService.getAll();
     }

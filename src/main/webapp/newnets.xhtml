@@ -55,7 +55,28 @@
                         </p:selectOneMenu>
                     </h:panelGroup>
                     <p:message for="size" display="text" showIcon="false" />
-	
+                    
+                    <p:outputLabel value="Vorname" for="reporterFirstName"/>
+					<p:inputText id="reporterFirstName" value="#{netBean.reporter.firstName}" placeholder="Optional" />
+					<p:message for="reporterFirstName" display="text" showIcon="false" />
+					
+					<p:outputLabel value="Nachname" for="reporterLastName"/>
+					<p:inputText id="reporterLastName" value="#{netBean.reporter.lastName}" placeholder="Optional" />
+					<p:message for="reporterLastName" display="text" showIcon="false" />
+					
+					<p:outputLabel value="Telefonnummer" for="reporterPhone"/>
+					<p:inputText id="reporterPhone" value="#{netBean.reporter.phone}" placeholder="Optional">
+					    <f:validator validatorId="phoneValidator" />
+					</p:inputText>
+					<p:message for="reporterPhone" display="text" showIcon="false" />
+					
+					<h:outputText id="anonymousLabel" value="Meldung anonym speichern" />
+					<p:selectBooleanCheckbox id="anonymous" value="#{netBean.anonymous}" 
+					    rendered="#{empty netBean.reporter.firstName and empty netBean.reporter.lastName and empty netBean.reporter.phone}">
+					    <f:ajax render="anonymousLabel" />
+					</p:selectBooleanCheckbox>
+					<p:outputLabel value="" for=""/>
+					                    	
 					<h:outputText />
 					<p:commandButton value="Speichern" 
 									 icon="pi pi-save" 
