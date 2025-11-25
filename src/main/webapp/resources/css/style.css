@@ -16,6 +16,7 @@ main {
 	padding: 20px;
 }
 
+/* ====== ERFASSEN PAGINA LAYOUT ====== */
 .label-column {
     width: 150px;
     text-align: right;
@@ -28,7 +29,7 @@ main {
 
 .error-column .ui-message {
     display: block;
-    max-width: 250px;
+    max-width: 450px;
     white-space: normal;
 }
 

@@ -96,6 +96,14 @@ public class NetBean implements Serializable {
 		this.anonymous = anonymous;
 	}
 
+	public void clearPersonalIfAnonym() {
+	    if (anonymous) {
+	        reporter.setFirstName(null);
+	        reporter.setLastName(null);
+	        reporter.setPhone(null);
+	    }
+	}
+	
 	private void loadLazyModel() {
 
         lazyNets = new LazyDataModel<Net>() {
@@ -202,11 +210,17 @@ public class NetBean implements Serializable {
     	net.setStatus(statusService.findByName("GEMELDET"));
     	
         // Reporter setzen
-		if (anonymous || (reporter == null)) {
+		if (anonymous || (reporter == null) || (isEmpty(reporter.getFirstName()) && isEmpty(reporter.getLastName()) && isEmpty(reporter.getPhone()))) {
 			System.out.println("Reporter is anonymous");
 			net.setReporter(null); 
 		} else {
 			System.out.println("Reporter is " + reporter.getFirstName() + " " + reporter.getLastName());
+			
+			if (isEmpty(reporter.getFirstName()) || isEmpty(reporter.getLastName()) || isEmpty(reporter.getPhone())) {
+		        FacesContext.getCurrentInstance().addMessage(null,
+			            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", "Vorname, Nachname und Telefonnum-mer erforderlich bei nicht-anonymer Meldung."));
+			        return null;				
+			}
 			
 			Person existing = personService.findByDetails(reporter.getFirstName(), reporter.getLastName(), reporter.getPhone());
 			
@@ -234,7 +248,8 @@ public class NetBean implements Serializable {
         
         net = new Net();
         selectedSizeId = null;
-        reporter = null;
+        reporter = new Person();
+        anonymous = false;
         
         loadLazyModel();
 
