@@ -110,8 +110,9 @@
 		    			 var="n" 
 		    			 paginator="true" 
 		    			 rows="10"
-			    		 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageTemplate}"
-	                     rowsPerPageTemplate="5,10,20,50" 
+			    		 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+	                     rowsPerPageTemplate="5,10,20,50"
+	                     rowsPerPageDropdown="true"
 	                     emptyMessage="Keine Geisternetze gefunden">
 				<p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
                 <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>

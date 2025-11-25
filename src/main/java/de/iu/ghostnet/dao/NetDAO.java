@@ -31,4 +31,11 @@ public class NetDAO {
 		query.setParameter("name", name);
 		return query.getSingleResult();    	
     }
+
+    public List<Net> findByStatusName(String statusName) {
+        return em.createQuery(
+                "SELECT n FROM Net n WHERE n.status.name = :name", Net.class)
+                .setParameter("name", statusName)
+                .getResultList();
+    }
 }
