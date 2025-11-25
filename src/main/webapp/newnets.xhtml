@@ -29,7 +29,7 @@
                         	<f:validateDoubleRange minimum="-90" maximum="90"/>
                         </p:inputText>
                     </h:panelGroup>		   
-                    <p:message for="latitude" display="text" showIcon="false" />
+                    <p:message for="latitude" display="text" />
                              
 		            <p:outputLabel value="Längengrad" for="longitude"/>
 					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
@@ -42,7 +42,7 @@
                         	<f:validateDoubleRange minimum="-180" maximum="180"/>
                         </p:inputText>
                     </h:panelGroup>
-					<p:message for="longitude" display="text" showIcon="false" />
+					<p:message for="longitude" display="text" />
 	
 					<p:outputLabel value="Size" for="size"/>
 					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
@@ -54,8 +54,46 @@
                             <f:selectItems value="#{netBean.allSizes}" var="s" itemValue="#{s.id}" itemLabel="#{s.name}" />
                         </p:selectOneMenu>
                     </h:panelGroup>
-                    <p:message for="size" display="text" showIcon="false" />
-	
+                    <p:message for="size" display="text" />
+                    
+					<h:outputText id="anonymousLabel" value="Meldung anonym speichern" />
+					<p:selectBooleanCheckbox id="anonymous" value="#{netBean.anonymous}" 
+					    rendered="#{empty netBean.reporter.firstName and empty netBean.reporter.lastName and empty netBean.reporter.phone}">
+					    <p:ajax event="change" update="personalPanel" listener="#{netBean.clearPersonalIfAnonym}" />
+					</p:selectBooleanCheckbox>
+					<p:outputLabel value="" for=""/>
+					                    	
+		        </h:panelGrid>   
+		        <h:panelGrid id="personalPanel" columns="3" cellpadding="5" columnClasses="label-column, input-column, error-column">
+                    <p:outputLabel value="Vorname" for="reporterFirstName"/>
+					<p:inputText id="reporterFirstName" 
+								 value="#{netBean.reporter.firstName}" 
+								 placeholder="Optional" 
+								 disabled="#{netBean.anonymous}" 
+								 required="#{!netBean.anonymous}" 
+								 requiredMessage="Vorname erforderlich bei nicht-anonymer Meldung" />
+					<p:message for="reporterFirstName" display="text" />
+					
+					<p:outputLabel value="Nachname" for="reporterLastName"/>
+					<p:inputText id="reporterLastName" 
+								 value="#{netBean.reporter.lastName}" 
+								 placeholder="Optional"
+								 disabled="#{netBean.anonymous}" 
+								 required="#{!netBean.anonymous}" 
+								 requiredMessage="Nachname erforderlich bei nicht-anonymer Meldung" />
+					<p:message for="reporterLastName" display="text" />
+					
+					<p:outputLabel value="Telefonnummer" for="reporterPhone"/>
+					<p:inputText id="reporterPhone" 
+								 value="#{netBean.reporter.phone}" 
+								 placeholder="Optional"
+								 disabled="#{netBean.anonymous}" 
+								 required="#{!netBean.anonymous}" 
+								 requiredMessage="Telefonnummer erforderlich bei nicht-anonymer Meldung">
+					    <f:validator validatorId="phoneValidator" />
+					</p:inputText>
+					<p:message for="reporterPhone" display="text" />
+					
 					<h:outputText />
 					<p:commandButton value="Speichern" 
 									 icon="pi pi-save" 

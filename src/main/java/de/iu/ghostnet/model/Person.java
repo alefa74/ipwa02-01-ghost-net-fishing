@@ -30,7 +30,7 @@ public class Person {
 	}
 
 	// getters & setters
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	
