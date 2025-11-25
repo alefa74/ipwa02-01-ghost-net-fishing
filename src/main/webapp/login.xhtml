@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">Login</ui:define>
+
+    <ui:define name="content">
+
+        <div class="page-container">
+            <h2>Login für Bergende Personen</h2>
+
+            <p:growl id="growl" showDetail="true" showSummary="false" life="3500"/>
+
+            <h:form id="loginForm">
+                <h:panelGrid columns="2" cellpadding="5" columnClasses="label-column, input-column">
+
+                    <p:outputLabel value="Vorname" for="firstName"/>
+                    <p:inputText id="firstName" value="#{loginBean.firstName}" required="true"
+                                 requiredMessage="Vorname erforderlich"/>
+
+                    <p:outputLabel value="Nachname" for="lastName"/>
+                    <p:inputText id="lastName" value="#{loginBean.lastName}" required="true"
+                                 requiredMessage="Nachname erforderlich"/>
+
+                    <p:outputLabel value="Telefonnummer" for="phone"/>
+                    <p:inputText id="phone" value="#{loginBean.phone}" required="true"
+                                 requiredMessage="Telefonnummer erforderlich"/>
+
+                    <h:outputText/>
+                    <p:commandButton value="Login" action="#{loginBean.login}" update="growl" icon="pi pi-sign-in"/>
+                </h:panelGrid>
+            </h:form>
+
+        </div>
+
+    </ui:define>
+</ui:composition>

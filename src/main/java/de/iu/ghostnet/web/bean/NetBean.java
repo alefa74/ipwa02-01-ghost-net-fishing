@@ -12,7 +12,6 @@ import de.iu.ghostnet.service.StatusService;
 import de.iu.ghostnet.service.PersonTypeService;
 
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -30,6 +29,7 @@ import java.util.Map;
 @Named
 @ViewScoped
 public class NetBean implements Serializable {
+	private static final long serialVersionUID = 1L;
 
     @Inject
     private NetService netService;

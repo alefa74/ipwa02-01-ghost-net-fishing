@@ -2,10 +2,12 @@ package de.iu.ghostnet.dao;
 
 import de.iu.ghostnet.model.Person;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+@ApplicationScoped
 public class PersonDAO {
 
     @Inject
