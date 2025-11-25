@@ -16,6 +16,41 @@ main {
 	padding: 20px;
 }
 
+/* ===== NAVIGATION LAYOUT ===== */
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f2f2f2;
+    border: 1px solid #cccccc;
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+.nav-container .ui-menubar,
+.nav-container .ui-menubar-root-list {
+    border: none !important;
+    background-color: #f2f2f2 !important;
+    box-shadow: none !important;
+}
+
+.ui-menuitem-link {
+    padding: 4px 10px !important;
+    font-size: 0.95rem;
+}
+
+.ui-menuitem .ui-menuitem-text {
+    padding: 2px 8px !important;
+}
+
+.nav-left, .nav-right {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+
+
 /* ====== ERFASSEN PAGINA LAYOUT ====== */
 .label-column {
     width: 150px;
@@ -56,14 +91,6 @@ main {
 }
 
 /* ==================== STARTSEITE ==================== */
-
-/* Hauptcontainer für die Startseite */
-.home-container {
-	max-width: 1100px;
-	margin: 0 auto;
-	padding: 3rem 2rem;
-	line-height: 1.7;
-}
 
 /* Überschrift zentriert und in Hausfarbe */
 .home-title {

@@ -12,7 +12,6 @@ import de.iu.ghostnet.service.StatusService;
 import de.iu.ghostnet.service.PersonTypeService;
 
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -26,10 +25,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import org.primefaces.model.*;
 
 @Named
 @ViewScoped
 public class NetBean implements Serializable {
+	private static final long serialVersionUID = 1L;
 
     @Inject
     private NetService netService;
@@ -43,6 +44,7 @@ public class NetBean implements Serializable {
     private PersonTypeService personTypeService;
     
     private LazyDataModel<Net> lazyNets;
+    private LazyDataModel<Net> gemeldetLazyNets;
     
     private Long selectedSizeId;    
     private Net net = new Net();
@@ -59,16 +61,23 @@ public class NetBean implements Serializable {
 		allStatuses = statusService.getAllStatuses();
 		allPersonTypes = personTypeService.getAllPersonTypes();
 		loadLazyModel();
+		loadGemeldetLazyModel();
 	}
 	
 	// getter & setter
     public Net getNet() {
     	return net; 
     }
+    
     public void setNet(Net net) {
     	this.net = net; 
     }
-    public Long getSelectedSizeId() {
+    
+    public List<Status> getAllStatuses() {
+		return allStatuses;
+	}
+
+	public Long getSelectedSizeId() {
 		return selectedSizeId;
 	}
 	public void setSelectedSizeId(Long selectedSizeId) {
@@ -78,6 +87,10 @@ public class NetBean implements Serializable {
 
 	public LazyDataModel<Net> getLazyNets() {
 		return lazyNets;
+	}
+
+	public LazyDataModel<Net> getGemeldetLazyNets() {
+		return gemeldetLazyNets;
 	}
 
     public Person getReporter() {
@@ -96,6 +109,22 @@ public class NetBean implements Serializable {
 		this.anonymous = anonymous;
 	}
 
+    public List<Net> getAllNets() {
+        return netService.getAll();
+    }
+    
+    public List<Size> getAllSizes() {
+    	if (allSizes == null) {
+    		allSizes = sizeService.getAllSizes();
+    		Collections.sort(allSizes, Comparator.comparing(Size::getId));
+    	}
+    	return allSizes;
+    }
+
+	public List<PersonType> getAllPersonTypes() {
+		return allPersonTypes;
+	}
+	
 	public void clearPersonalIfAnonym() {
 	    if (anonymous) {
 	        reporter.setFirstName(null);
@@ -109,33 +138,20 @@ public class NetBean implements Serializable {
         lazyNets = new LazyDataModel<Net>() {
 
             @Override
-            public int count(Map<String, org.primefaces.model.FilterMeta> filterBy) {
+            public int count(Map<String, FilterMeta> filterBy) {
                 // Anzahl aller verfügbaren Netze.
                 return netService.getAll().size();
             }
 
             @Override
             public List<Net> load(int first, int pageSize,
-                                  Map<String, org.primefaces.model.SortMeta> sortBy,
-                                  Map<String, org.primefaces.model.FilterMeta> filterBy) {
+                                  Map<String, SortMeta> sortBy,
+                                  Map<String, FilterMeta> filterBy) {
                 // Gesamte Liste aller Netze aus Service laden
                 List<Net> list = netService.getAll();
 
                 // SORTIERUNG
-                if (sortBy != null && !sortBy.isEmpty()) {
-
-                    org.primefaces.model.SortMeta meta = sortBy.values().iterator().next();
-
-                    String field = meta.getField();
-                    Comparator<Net> comparator = getComparator(field);
-
-                    // Sortierreihenfolge bestimmen
-                    if (meta.getOrder() == org.primefaces.model.SortOrder.DESCENDING) {
-                        comparator = comparator.reversed();
-                    }
-
-                    list.sort(comparator);
-                }
+                sortAndPaginate(list, first, pageSize, sortBy);
 
                 // PAGINIERUNG auf Basis von first + pageSize
                 int end = Math.min(first + pageSize, list.size());
@@ -153,6 +169,58 @@ public class NetBean implements Serializable {
             }
         };
     }
+	
+	private void loadGemeldetLazyModel() {
+		gemeldetLazyNets = new LazyDataModel<Net>() {
+
+	        @Override
+	        public int count(Map<String, FilterMeta> filterBy) {
+	            return netService.getAllByStatus("GEMELDET").size();
+	        }
+
+	        @Override
+	        public List<Net> load(int first, int pageSize,
+	                              Map<String, SortMeta> sortBy,
+	                              Map<String, FilterMeta> filterBy) {
+	        	// Nur Netze mit Status Gemeldet
+	            List<Net> list = netService.getAllByStatus("GEMELDET");
+	            
+                // SORTIERUNG
+                sortAndPaginate(list, first, pageSize, sortBy);
+
+                // PAGINIERUNG auf Basis von first + pageSize
+                int end = Math.min(first + pageSize, list.size());
+
+                // PrimeFaces mitteilen, wie viele Gesamtzeilen existieren.
+                this.setRowCount(list.size());
+
+                // Wenn die Seite leer wäre:
+                if (first > end) {
+                    return Collections.emptyList();
+                }
+
+                // Nur den relevanten Abschnitt zurückgeben.
+                return list.subList(first, end);
+	        }
+	    };
+	}
+	
+	private void sortAndPaginate(List<Net> list, int first, int pageSize, Map<String, SortMeta> sortBy) {
+        if (sortBy != null && !sortBy.isEmpty()) {
+
+            SortMeta meta = sortBy.values().iterator().next();
+
+            String field = meta.getField();
+            Comparator<Net> comparator = getComparator(field);
+
+            // Sortierreihenfolge bestimmen
+            if (meta.getOrder() == SortOrder.DESCENDING) {
+                comparator = comparator.reversed();
+            }
+
+            list.sort(comparator);
+        }	
+	}
 
     private Comparator<Net> getComparator(String field) {
         // Liefert je nach Feldnamen den passenden Comparator.
@@ -260,15 +328,4 @@ public class NetBean implements Serializable {
 	    return value == null || value.trim().isEmpty();
 	}
 	
-    public List<Net> getAllNets() {
-        return netService.getAll();
-    }
-    
-    public List<Size> getAllSizes() {
-    	if (allSizes == null) {
-    		allSizes = sizeService.getAllSizes();
-    		Collections.sort(allSizes, Comparator.comparing(Size::getId));
-    	}
-    	return allSizes;
-    }
 }

@@ -27,4 +27,8 @@ public class NetService {
     public List<Net> getAll() {
         return netDAO.findAll();
     }
+
+    public List<Net> getAllByStatus(String statusName) {
+        return netDAO.findByStatusName(statusName);
+    }
 }

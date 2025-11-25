@@ -11,7 +11,7 @@
     <ui:define name="content">
     	<div class="page-container">
     
-		    <h2>Geisternetze erfassen</h2>
+		    <h2 class="home-title">Geisternetze erfassen</h2>
 		    
 			<p:growl id="growl" showDetail="true" showSummary="false" life="3500" />
 			
@@ -104,14 +104,15 @@
 		        </h:panelGrid>   
 		    </h:form>
 		
-		    <h3>Alle Geisternetze:</h3>
+		    <h3 class="home-section-title">Alle Geisternetze:</h3>
 		    <p:dataTable id="netTable" 
 		    			 value="#{netBean.lazyNets}" 
 		    			 var="n" 
 		    			 paginator="true" 
 		    			 rows="10"
-			    		 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageTemplate}"
-	                     rowsPerPageTemplate="5,10,20,50" 
+			    		 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+	                     rowsPerPageTemplate="5,10,20,50"
+	                     rowsPerPageDropdown="true"
 	                     emptyMessage="Keine Geisternetze gefunden">
 				<p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
                 <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>

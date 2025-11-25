@@ -12,6 +12,7 @@ import java.util.List;
 @Named
 @ViewScoped
 public class PersonBean implements Serializable {
+	private static final long serialVersionUID = 1L;
 
     @Inject
     private PersonService personService;

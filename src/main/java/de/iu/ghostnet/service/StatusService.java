@@ -15,7 +15,6 @@ public class StatusService {
 
     public List<Status> getAllStatuses() {
         List<Status> statuses = statusDAO.findAll();
-    	System.out.println("getAllStatuses");
 
         // INIT
         if (statuses.isEmpty()) {
