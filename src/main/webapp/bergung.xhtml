@@ -19,12 +19,12 @@
                              rowsPerPageTemplate="5,10,20,50"
                              rowsPerPageDropdown="true"
                              emptyMessage="Keine Geisternetze gefunden">
-                    <p:column headerText="ID">#{n.id}</p:column>
-                    <p:column headerText="Latitude">#{n.latitude}</p:column>
-                    <p:column headerText="Longitude">#{n.longitude}</p:column>
-                    <p:column headerText="Größe">#{n.size.name}</p:column>
-                    <p:column headerText="Status">#{n.status.name}</p:column>
-                    <p:column headerText="Gemeldet">#{n.formattedReportedAt}</p:column>
+                    <p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
+                    <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
+                    <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
+                    <p:column headerText="Größe" sortBy="#{n.size.name}">#{n.size.name}</p:column>
+                    <p:column headerText="Status" sortBy="#{n.status.name}">#{n.status.name}</p:column>
+                    <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
                 </p:dataTable>
             </div>
         </h:panelGroup>

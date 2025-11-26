@@ -18,7 +18,6 @@ public class StatusService {
 
         // INIT
         if (statuses.isEmpty()) {
-        	System.out.println("Init status");
             statusDAO.save(new Status("GEMELDET"));
             statusDAO.save(new Status("BERGUNG_BEVORSTEHEND"));
             statusDAO.save(new Status("GEBORGEN"));

@@ -23,6 +23,10 @@ public class NetService {
     	
         netDAO.save(net);
     }
+    
+    public void updateNet(Net net) {
+    	netDAO.save(net);
+    }
 
     public List<Net> getAll() {
         return netDAO.findAll();
