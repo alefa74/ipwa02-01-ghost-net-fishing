@@ -6,11 +6,9 @@ import de.iu.ghostnet.model.Size;
 import de.iu.ghostnet.model.Status;
 import de.iu.ghostnet.model.PersonType;
 import de.iu.ghostnet.service.NetService;
-import de.iu.ghostnet.service.PersonService;
 import de.iu.ghostnet.service.SizeService;
 import de.iu.ghostnet.service.StatusService;
 import de.iu.ghostnet.service.PersonTypeService;
-import de.iu.ghostnet.web.bean.LoginBean;
 
 import org.primefaces.model.LazyDataModel;
 
@@ -28,7 +26,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.primefaces.PrimeFaces;
 import org.primefaces.model.*;
 
 @Named
@@ -43,14 +40,13 @@ public class NetBean implements Serializable {
     @Inject
     private StatusService statusService;
     @Inject
-    private PersonService personService;
-    @Inject
     private PersonTypeService personTypeService;
     @Inject
     private LoginBean loginBean;
     
     private LazyDataModel<Net> lazyNets;
     private LazyDataModel<Net> gemeldetLazyNets;
+    private LazyDataModel<Net> angemeldetLazyNets;
     
     private Long selectedSizeId;    
     private Net net = new Net();
@@ -69,6 +65,7 @@ public class NetBean implements Serializable {
 		allPersonTypes = personTypeService.getAllPersonTypes();
 		loadLazyModel();
 		loadGemeldetLazyModel();
+		loadAngemeldetLazyModel();
 	}
 	
 	// getter & setter
@@ -100,7 +97,11 @@ public class NetBean implements Serializable {
 		return gemeldetLazyNets;
 	}
 
-    public Person getReporter() {
+    public LazyDataModel<Net> getAngemeldetLazyNets() {
+		return angemeldetLazyNets;
+	}
+
+	public Person getReporter() {
 		return reporter;
 	}
 
@@ -222,6 +223,67 @@ public class NetBean implements Serializable {
 	                              Map<String, FilterMeta> filterBy) {
 	        	// Nur Netze mit Status Gemeldet
 	            List<Net> list = netService.getAllByStatus("GEMELDET");
+	            
+                // SORTIERUNG
+                sortAndPaginate(list, first, pageSize, sortBy);
+
+                // PAGINIERUNG auf Basis von first + pageSize
+                int end = Math.min(first + pageSize, list.size());
+
+                // PrimeFaces mitteilen, wie viele Gesamtzeilen existieren.
+                this.setRowCount(list.size());
+
+                // Wenn die Seite leer wäre:
+                if (first > end) {
+                    page = Collections.emptyList();
+                } else {
+	                // Nur den relevanten Abschnitt zurückgeben.
+	                page =  list.subList(first, end);
+                }
+                
+                return page;
+	        }
+	        
+	    };
+	}
+	
+	private void loadAngemeldetLazyModel() {
+		angemeldetLazyNets = new LazyDataModel<Net>() {
+			
+			private List<Net> page;
+
+			@Override
+	        public String getRowKey(Net net) {
+	            return net != null && net.getId() != null
+	                    ? net.getId().toString()
+	                    : null;
+	        }
+			
+			@Override
+	        public int count(Map<String, FilterMeta> filterBy) {
+	            return netService.getAllAssigned("BERGUNG_BEVORSTEHEND",loginBean.getPerson().getId()).size();
+	        }
+			
+	        @Override
+	        public Net getRowData(String rowKey) {        	
+	            if (rowKey == null || page == null)
+	                return null;
+
+	            for (Net n : page) {
+	                if (n.getId() != null && n.getId().toString().equals(rowKey)) {
+	                    return n;
+	                }
+	            }
+	            return null;
+	        }
+
+
+	        @Override
+	        public List<Net> load(int first, int pageSize,
+	                              Map<String, SortMeta> sortBy,
+	                              Map<String, FilterMeta> filterBy) {
+	        	// Nur Netze mit Status Bergun_bevorstehend und eingetragen als logged in Person
+	            List<Net> list = netService.getAllAssigned("BERGUNG_BEVORSTEHEND",loginBean.getPerson().getId());
 	            
                 // SORTIERUNG
                 sortAndPaginate(list, first, pageSize, sortBy);
@@ -376,6 +438,51 @@ public class NetBean implements Serializable {
 	        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
 	                "Erfolgreich gespeichert",
 	                selectedNets.size() + " Geisternetze wurden zur Bergung vorgemerkt.");
+	        FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
+        
+        selectedNets.clear();
+        gemeldetLazyNets.load(0, 10, null, null);  
+    }
+
+	public void reportRecovery() {
+        if (selectedNets == null || selectedNets.isEmpty()) {
+            FacesMessage msg = new FacesMessage(
+            		FacesMessage.SEVERITY_WARN,
+                    "Keine Netze ausgewählt", 
+                    "Bitte wählen Sie mindestens ein Netz aus.");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            return;
+        }
+    	
+    	if (loginBean.getPerson() == null) {
+    		FacesMessage msg = new FacesMessage(
+    				FacesMessage.SEVERITY_ERROR,
+    				"Fehler", 
+    				"Sie sind nicht eingeloggt");
+    		FacesContext.getCurrentInstance().addMessage(null, msg);
+    		return;
+    	}
+    	
+    	int successCount = 0;
+    	Person recoverer = loginBean.getPerson();
+    	
+        for (Net net: selectedNets) {
+        	try {
+        		netService.reportRecovery(net, recoverer);
+        		successCount ++;
+        	} catch (IllegalArgumentException ex) {
+                // Fehler für dieses Netz anzeigen
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Fehler bei Netz " + net.getId(),
+                                ex.getMessage()));
+        	}
+        }
+        if (successCount > 0) {
+	        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+	                "Erfolgreich gespeichert",
+	                selectedNets.size() + " Geisternetze wurden als geborgen gemerkt.");
 	        FacesContext.getCurrentInstance().addMessage(null, msg);
         }
         

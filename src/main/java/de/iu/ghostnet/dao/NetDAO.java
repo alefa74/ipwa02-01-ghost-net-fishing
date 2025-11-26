@@ -38,7 +38,15 @@ public class NetDAO {
                 .setParameter("name", statusName)
                 .getResultList();
     }
-    
+ 
+    public List<Net> findByStatusAndPerson(String statusName, Long recovererId) {
+        return em.createQuery(
+                "SELECT n FROM Net n WHERE n.status.name = :name AND n.recoverer.id = :recovererId", Net.class)
+                .setParameter("name", statusName)
+                .setParameter("recovererId", recovererId)
+                .getResultList();
+    }
+
     public Net findById(Long id) {
         List<Net> result = em.createQuery(
                 "SELECT n FROM Net n WHERE n.id = :id", Net.class)

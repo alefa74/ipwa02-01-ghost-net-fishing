@@ -73,6 +73,10 @@ public class Person {
 		this.personType = personType;
 	}
 
+	@Transient
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 
 
 }
