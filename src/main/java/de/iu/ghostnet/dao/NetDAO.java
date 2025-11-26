@@ -38,4 +38,12 @@ public class NetDAO {
                 .setParameter("name", statusName)
                 .getResultList();
     }
+    
+    public Net findById(Long id) {
+        List<Net> result = em.createQuery(
+                "SELECT n FROM Net n WHERE n.id = :id", Net.class)
+                .setParameter("id", id)
+                .getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
 }

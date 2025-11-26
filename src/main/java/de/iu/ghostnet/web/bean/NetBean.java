@@ -307,87 +307,77 @@ public class NetBean implements Serializable {
         }
     }
     
-	public String save() {
-    	if (selectedSizeId != null) {
-    		net.setSize(sizeService.findById(selectedSizeId));
-    	}
-    	
-    	net.setStatus(statusService.findByName("GEMELDET"));
-    	
-        // Reporter setzen
-		if (anonymous || (reporter == null) || (isEmpty(reporter.getFirstName()) && isEmpty(reporter.getLastName()) && isEmpty(reporter.getPhone()))) {
-			net.setReporter(null); 
-		} else {
-			
-			if (isEmpty(reporter.getFirstName()) || isEmpty(reporter.getLastName()) || isEmpty(reporter.getPhone())) {
-		        FacesContext.getCurrentInstance().addMessage(null,
-			            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", "Vorname, Nachname und Telefonnum-mer erforderlich bei nicht-anonymer Meldung."));
-			        return null;				
-			}
-			
-			Person existing = personService.findByDetails(reporter.getFirstName(), reporter.getLastName(), reporter.getPhone());
-			
-			if (existing == null) {
-    			reporter.setPersonType(personTypeService.findByName("MELDER"));
-				personService.save(reporter); 
-			} else { 
-				reporter = existing; 
-			} 
-			net.setReporter(reporter);
-		}
-        
-        netService.save(net);
-        
-    	// Erfolgsmeldung anzeigen
-        FacesContext.getCurrentInstance().addMessage(null, 
-        		new FacesMessage(
-    				FacesMessage.SEVERITY_INFO, 
-    				"Erfolgreich gespeichert", 
-    				"Das Geisternetz wurde erfolgreich erfasst. Danke für Ihre Meldung!"
-        		)
-        	);
-        
-        net = new Net();
-        selectedSizeId = null;
-        reporter = new Person();
-        anonymous = false;
-        
-        loadLazyModel();
+	public String reportNewNet() {
+		try {
+			netService.reportNewNet(net, reporter, anonymous, selectedSizeId);
 
+	    	// Erfolgsmeldung anzeigen
+	        FacesContext.getCurrentInstance().addMessage(null, 
+	        		new FacesMessage(
+	    				FacesMessage.SEVERITY_INFO, 
+	    				"Erfolgreich gespeichert", 
+	    				"Das Geisternetz wurde erfolgreich erfasst. Danke für Ihre Meldung!"
+	        		)
+	        	);
+	        
+	        resetForm();
+	        loadLazyModel();
+	        
+		} catch (IllegalArgumentException ex) {
+	        FacesContext.getCurrentInstance().addMessage(null,
+	                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", ex.getMessage())
+	            );
+		}
         return null;
     }
-
-	private boolean isEmpty(String value) {
-	    return value == null || value.trim().isEmpty();
+	
+	private void resetForm() {
+	    net = new Net();
+	    reporter = new Person();
+	    anonymous = false;
+	    selectedSizeId = null;
 	}
 	
-	public void processSelected() {
+	public void assignNetForRecovery() {
         if (selectedNets == null || selectedNets.isEmpty()) {
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN,
-                    "Keine Netze ausgewählt", "Bitte wählen Sie mindestens ein Netz aus.");
+            FacesMessage msg = new FacesMessage(
+            		FacesMessage.SEVERITY_WARN,
+                    "Keine Netze ausgewählt", 
+                    "Bitte wählen Sie mindestens ein Netz aus.");
             FacesContext.getCurrentInstance().addMessage(null, msg);
             return;
         }
     	
     	if (loginBean.getPerson() == null) {
-    		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-    				"Fehler", "Sie sind nicht eingeloggt");
+    		FacesMessage msg = new FacesMessage(
+    				FacesMessage.SEVERITY_ERROR,
+    				"Fehler", 
+    				"Sie sind nicht eingeloggt");
     		FacesContext.getCurrentInstance().addMessage(null, msg);
     		return;
     	}
     	
+    	int successCount = 0;
+    	Person recoverer = loginBean.getPerson();
+    	
         for (Net net: selectedNets) {
-        	net.setStatus(statusService.findByName("BERGUNG_BEVORSTEHEND"));
-        	net.setRecoverer(loginBean.getPerson());
-        	net.setAssignedAt(LocalDateTime.now());
-        	
-        	netService.updateNet(net);
+        	try {
+        		netService.assignNetForRecovery(net, recoverer);
+        		successCount ++;
+        	} catch (IllegalArgumentException ex) {
+                // Fehler für dieses Netz anzeigen
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Fehler bei Netz " + net.getId(),
+                                ex.getMessage()));
+        	}
         }
-        
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
-                "Erfolgreich gespeichert",
-                selectedNets.size() + " Geisternetze wurden zur Bergung vorgemerkt.");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        if (successCount > 0) {
+	        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+	                "Erfolgreich gespeichert",
+	                selectedNets.size() + " Geisternetze wurden zur Bergung vorgemerkt.");
+	        FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
         
         selectedNets.clear();
         gemeldetLazyNets.load(0, 10, null, null);  

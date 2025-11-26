@@ -17,7 +17,7 @@
                 <h:form id="anmeldungForm">
 
 					<p:commandButton value="Bergung zueignen" 
-									 action="#{netBean.processSelected}"
+									 action="#{netBean.assignNetForRecovery}"
 									 update="messages, anzumeldenTable"/>
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
@@ -41,7 +41,7 @@
 	                </p:dataTable>
 	                
 					<p:commandButton value="Bergung zueignen" 
-									 action="#{netBean.processSelected}"
+									 action="#{netBean.assignNetForRecovery}"
 									 update="messages, anzumeldenTable"/>
 	       		</h:form>
             </div>
