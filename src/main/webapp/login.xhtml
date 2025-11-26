@@ -6,6 +6,10 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+   	<f:metadata>
+   		<f:viewParam name="redirectTo" value="#{loginBean.redirectTo}" />
+   	</f:metadata>
+   	
     <ui:define name="title">Login</ui:define>
 
     <ui:define name="content">
