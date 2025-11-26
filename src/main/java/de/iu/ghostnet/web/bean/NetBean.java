@@ -10,6 +10,7 @@ import de.iu.ghostnet.service.PersonService;
 import de.iu.ghostnet.service.SizeService;
 import de.iu.ghostnet.service.StatusService;
 import de.iu.ghostnet.service.PersonTypeService;
+import de.iu.ghostnet.web.bean.LoginBean;
 
 import org.primefaces.model.LazyDataModel;
 
@@ -21,10 +22,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.*;
 
 @Named
@@ -42,6 +46,8 @@ public class NetBean implements Serializable {
     private PersonService personService;
     @Inject
     private PersonTypeService personTypeService;
+    @Inject
+    private LoginBean loginBean;
     
     private LazyDataModel<Net> lazyNets;
     private LazyDataModel<Net> gemeldetLazyNets;
@@ -51,6 +57,7 @@ public class NetBean implements Serializable {
     private List<Status> allStatuses;
     private List<Size> allSizes;
     private List<PersonType> allPersonTypes;
+    private List<Net> selectedNets = new ArrayList<>();
     
     private Person reporter = new Person();
     private boolean anonymous;
@@ -125,6 +132,14 @@ public class NetBean implements Serializable {
 		return allPersonTypes;
 	}
 	
+	public List<Net> getSelectedNets() {
+		return selectedNets;
+	}
+
+	public void setSelectedNets(List<Net> selectedNets) {
+		this.selectedNets = selectedNets;
+	}
+
 	public void clearPersonalIfAnonym() {
 	    if (anonymous) {
 	        reporter.setFirstName(null);
@@ -172,11 +187,34 @@ public class NetBean implements Serializable {
 	
 	private void loadGemeldetLazyModel() {
 		gemeldetLazyNets = new LazyDataModel<Net>() {
+			
+			private List<Net> page;
 
-	        @Override
+			@Override
+	        public String getRowKey(Net net) {
+	            return net != null && net.getId() != null
+	                    ? net.getId().toString()
+	                    : null;
+	        }
+			
+			@Override
 	        public int count(Map<String, FilterMeta> filterBy) {
 	            return netService.getAllByStatus("GEMELDET").size();
 	        }
+			
+	        @Override
+	        public Net getRowData(String rowKey) {        	
+	            if (rowKey == null || page == null)
+	                return null;
+
+	            for (Net n : page) {
+	                if (n.getId() != null && n.getId().toString().equals(rowKey)) {
+	                    return n;
+	                }
+	            }
+	            return null;
+	        }
+
 
 	        @Override
 	        public List<Net> load(int first, int pageSize,
@@ -196,12 +234,15 @@ public class NetBean implements Serializable {
 
                 // Wenn die Seite leer wäre:
                 if (first > end) {
-                    return Collections.emptyList();
+                    page = Collections.emptyList();
+                } else {
+	                // Nur den relevanten Abschnitt zurückgeben.
+	                page =  list.subList(first, end);
                 }
-
-                // Nur den relevanten Abschnitt zurückgeben.
-                return list.subList(first, end);
+                
+                return page;
 	        }
+	        
 	    };
 	}
 	
@@ -266,66 +307,79 @@ public class NetBean implements Serializable {
         }
     }
     
-	public String save() {
-		System.out.println("save new net");
-    	
-    	if (selectedSizeId != null) {
-    		net.setSize(sizeService.findById(selectedSizeId));
-    	} else {
-    		System.out.println("No size selected");
-    	}
-    	
-    	net.setStatus(statusService.findByName("GEMELDET"));
-    	
-        // Reporter setzen
-		if (anonymous || (reporter == null) || (isEmpty(reporter.getFirstName()) && isEmpty(reporter.getLastName()) && isEmpty(reporter.getPhone()))) {
-			System.out.println("Reporter is anonymous");
-			net.setReporter(null); 
-		} else {
-			System.out.println("Reporter is " + reporter.getFirstName() + " " + reporter.getLastName());
-			
-			if (isEmpty(reporter.getFirstName()) || isEmpty(reporter.getLastName()) || isEmpty(reporter.getPhone())) {
-		        FacesContext.getCurrentInstance().addMessage(null,
-			            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", "Vorname, Nachname und Telefonnum-mer erforderlich bei nicht-anonymer Meldung."));
-			        return null;				
-			}
-			
-			Person existing = personService.findByDetails(reporter.getFirstName(), reporter.getLastName(), reporter.getPhone());
-			
-			if (existing == null) {
-    			System.out.println("Reporter is created");
-    			reporter.setPersonType(personTypeService.findByName("MELDER"));
-				personService.save(reporter); 
-			} else { 
-    			System.out.println("Reporter is found");
-				reporter = existing; 
-			} 
-			net.setReporter(reporter);
-		}
-        
-        netService.save(net);
-        
-    	// Erfolgsmeldung anzeigen
-        FacesContext.getCurrentInstance().addMessage(null, 
-        		new FacesMessage(
-    				FacesMessage.SEVERITY_INFO, 
-    				"Erfolgreich gespeichert", 
-    				"Das Geisternetz wurde erfolgreich erfasst. Danke für Ihre Meldung!"
-        		)
-        	);
-        
-        net = new Net();
-        selectedSizeId = null;
-        reporter = new Person();
-        anonymous = false;
-        
-        loadLazyModel();
+	public String reportNewNet() {
+		try {
+			netService.reportNewNet(net, reporter, anonymous, selectedSizeId);
 
+	    	// Erfolgsmeldung anzeigen
+	        FacesContext.getCurrentInstance().addMessage(null, 
+	        		new FacesMessage(
+	    				FacesMessage.SEVERITY_INFO, 
+	    				"Erfolgreich gespeichert", 
+	    				"Das Geisternetz wurde erfolgreich erfasst. Danke für Ihre Meldung!"
+	        		)
+	        	);
+	        
+	        resetForm();
+	        loadLazyModel();
+	        
+		} catch (IllegalArgumentException ex) {
+	        FacesContext.getCurrentInstance().addMessage(null,
+	                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", ex.getMessage())
+	            );
+		}
         return null;
     }
-
-	private boolean isEmpty(String value) {
-	    return value == null || value.trim().isEmpty();
+	
+	private void resetForm() {
+	    net = new Net();
+	    reporter = new Person();
+	    anonymous = false;
+	    selectedSizeId = null;
 	}
 	
+	public void assignNetForRecovery() {
+        if (selectedNets == null || selectedNets.isEmpty()) {
+            FacesMessage msg = new FacesMessage(
+            		FacesMessage.SEVERITY_WARN,
+                    "Keine Netze ausgewählt", 
+                    "Bitte wählen Sie mindestens ein Netz aus.");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            return;
+        }
+    	
+    	if (loginBean.getPerson() == null) {
+    		FacesMessage msg = new FacesMessage(
+    				FacesMessage.SEVERITY_ERROR,
+    				"Fehler", 
+    				"Sie sind nicht eingeloggt");
+    		FacesContext.getCurrentInstance().addMessage(null, msg);
+    		return;
+    	}
+    	
+    	int successCount = 0;
+    	Person recoverer = loginBean.getPerson();
+    	
+        for (Net net: selectedNets) {
+        	try {
+        		netService.assignNetForRecovery(net, recoverer);
+        		successCount ++;
+        	} catch (IllegalArgumentException ex) {
+                // Fehler für dieses Netz anzeigen
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Fehler bei Netz " + net.getId(),
+                                ex.getMessage()));
+        	}
+        }
+        if (successCount > 0) {
+	        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+	                "Erfolgreich gespeichert",
+	                selectedNets.size() + " Geisternetze wurden zur Bergung vorgemerkt.");
+	        FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
+        
+        selectedNets.clear();
+        gemeldetLazyNets.load(0, 10, null, null);  
+    }
 }

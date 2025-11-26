@@ -3,7 +3,8 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">Zu bergende Geisternetze</ui:define>
 
@@ -19,12 +20,12 @@
                              rowsPerPageTemplate="5,10,20,50"
                              rowsPerPageDropdown="true"
                              emptyMessage="Keine Geisternetze gefunden">
-                    <p:column headerText="ID">#{n.id}</p:column>
-                    <p:column headerText="Latitude">#{n.latitude}</p:column>
-                    <p:column headerText="Longitude">#{n.longitude}</p:column>
-                    <p:column headerText="Größe">#{n.size.name}</p:column>
-                    <p:column headerText="Status">#{n.status.name}</p:column>
-                    <p:column headerText="Gemeldet">#{n.formattedReportedAt}</p:column>
+                    <p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
+                    <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
+                    <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
+                    <p:column headerText="Größe" sortBy="#{n.size.name}">#{n.size.name}</p:column>
+                    <p:column headerText="Status" sortBy="#{n.status.name}">#{n.status.name}</p:column>
+                    <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
                 </p:dataTable>
             </div>
         </h:panelGroup>
@@ -32,7 +33,9 @@
         <h:panelGroup rendered="#{!loginBean.loggedIn}">
             <div class="page-container">
                 <h3 class="home-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h3>
-                <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary"/>
+                <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary">
+                	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />
+                </p:button>
             </div>
         </h:panelGroup>
 

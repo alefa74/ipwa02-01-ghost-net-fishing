@@ -49,7 +49,7 @@ public class Net {
 	}
     
 	// getter & setter
-    public long getId() {
+    public Long getId() {
     	return id;
     }
 	public Double getLatitude() {

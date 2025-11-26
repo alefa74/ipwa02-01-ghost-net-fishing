@@ -6,6 +6,10 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+   	<f:metadata>
+   		<f:viewParam name="redirectTo" value="#{loginBean.redirectTo}" />
+   	</f:metadata>
+   	
     <ui:define name="title">Login</ui:define>
 
     <ui:define name="content">
@@ -13,7 +17,7 @@
         <div class="page-container">
             <h2>Login für Bergende Personen</h2>
 
-            <p:growl id="growl" showDetail="true" showSummary="false" life="3500"/>
+            <p:growl id="growl" showDetail="true" life="3500"/>
 
             <h:form id="loginForm">
                 <h:panelGrid columns="2" cellpadding="5" columnClasses="label-column, input-column">

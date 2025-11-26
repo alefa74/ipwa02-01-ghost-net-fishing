@@ -25,6 +25,8 @@ public class LoginBean implements Serializable {
     private Person person;
     private boolean loggedIn = false;
     private String errorMessage;
+    
+    private String redirectTo;
 
     
     // getters & setters
@@ -64,13 +66,24 @@ public class LoginBean implements Serializable {
 		return errorMessage;
 	}
 
+	public String getRedirectTo() {
+		return redirectTo;
+	}
+
+	public void setRedirectTo(String redirectTo) {
+		this.redirectTo = redirectTo;
+	}
+
 	public String login() {
         try {
             person = personDAO.findByDetails(firstName, lastName, phone);
 
             if (person != null && person.getPersonType().getName().equals("BERGER")) {
                 loggedIn = true;
-                return "/bergung?faces-redirect=true";
+                if (redirectTo == null || redirectTo.isEmpty()) {
+                	return "/index?faces-redirect=true";
+                }
+                return redirectTo + "?faces-redirect=true";
             }
         } catch (Exception e) {
             // ignorieren, Fehlermeldung wird unten angezeigt
@@ -84,7 +97,6 @@ public class LoginBean implements Serializable {
     }
 
     public String logout() {
-    	System.out.println("logout " + firstName);
         loggedIn = false;
         person = null;
         firstName = null;
