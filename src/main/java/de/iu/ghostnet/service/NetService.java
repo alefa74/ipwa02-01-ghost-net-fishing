@@ -93,11 +93,46 @@ public class NetService {
     	netDAO.save(net);
     }
 
+    public void reportRecovery(Net net, Person recoverer) {
+        if (recoverer == null) {
+            throw new IllegalArgumentException("Es ist kein Benutzer eingeloggt.");
+        }
+
+        // Net aus der DB erneut laden, um Race Conditions zu vermeiden
+        Net fresh = netDAO.findById(net.getId());
+
+        if (fresh == null) {
+            throw new IllegalArgumentException("Das ausgewählte Netz existiert nicht mehr.");
+        }
+
+        // Darf nur BERGUNG_BEVORSTEHEND sein
+        if (!"BERGUNG_BEVORSTEHEND".equals(fresh.getStatus().getName())) {
+            throw new IllegalArgumentException(
+                    "Das Netz wurde bereits von einer anderen Person zugeordnet."
+            );
+        }
+        
+        // Darf nur von angemeldete zugeignet sein
+        // TODO
+
+        // Alles OK? Dann zuordnen
+        Status geborgen = statusService.findByName("GEBORGEN");
+
+        fresh.setStatus(geborgen);
+        fresh.setRecoveredAt(LocalDateTime.now());   
+        
+    	netDAO.save(net);
+    }
+
     public List<Net> getAll() {
         return netDAO.findAll();
     }
 
     public List<Net> getAllByStatus(String statusName) {
         return netDAO.findByStatusName(statusName);
+    }
+    
+    public List<Net> getAllAssigned(String statusName, Long recovererId) {
+    	return netDAO.findByStatusAndPerson(statusName, recovererId);
     }
 }
