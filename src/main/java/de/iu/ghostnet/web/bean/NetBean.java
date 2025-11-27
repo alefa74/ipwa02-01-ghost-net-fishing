@@ -47,6 +47,7 @@ public class NetBean implements Serializable {
     private LazyDataModel<Net> lazyNets;
     private LazyDataModel<Net> gemeldetLazyNets;
     private LazyDataModel<Net> angemeldetLazyNets;
+    private LazyDataModel<Net> verschollenLazyNets;
     
     private Long selectedSizeId;    
     private Net net = new Net();
@@ -66,6 +67,7 @@ public class NetBean implements Serializable {
 		loadLazyModel();
 		loadGemeldetLazyModel();
 		loadAngemeldetLazyModel();
+		verschollenLazyModel();
 	}
 	
 	// getter & setter
@@ -99,6 +101,10 @@ public class NetBean implements Serializable {
 
     public LazyDataModel<Net> getAngemeldetLazyNets() {
 		return angemeldetLazyNets;
+	}
+
+	public LazyDataModel<Net> getVerschollenLazyNets() {
+		return verschollenLazyNets;
 	}
 
 	public Person getReporter() {
@@ -308,6 +314,66 @@ public class NetBean implements Serializable {
 	    };
 	}
 	
+	private void verschollenLazyModel() {
+		verschollenLazyNets = new LazyDataModel<Net>() {
+			
+			private List<Net> page;
+
+			@Override
+	        public String getRowKey(Net net) {
+	            return net != null && net.getId() != null
+	                    ? net.getId().toString()
+	                    : null;
+	        }
+			
+			@Override
+	        public int count(Map<String, FilterMeta> filterBy) {
+	            return netService.getAllByStatus("GEMELDET").size();
+	        }
+			
+	        @Override
+	        public Net getRowData(String rowKey) {        	
+	            if (rowKey == null || page == null)
+	                return null;
+
+	            for (Net n : page) {
+	                if (n.getId() != null && n.getId().toString().equals(rowKey)) {
+	                    return n;
+	                }
+	            }
+	            return null;
+	        }
+
+
+	        @Override
+	        public List<Net> load(int first, int pageSize,
+	                              Map<String, SortMeta> sortBy,
+	                              Map<String, FilterMeta> filterBy) {
+	        	// Nur Netze mit die nicht verschollen oder geborgen sind
+	            List<Net> list = netService.getAllAvailableNets();
+	            
+                // SORTIERUNG
+                sortAndPaginate(list, first, pageSize, sortBy);
+
+                // PAGINIERUNG auf Basis von first + pageSize
+                int end = Math.min(first + pageSize, list.size());
+
+                // PrimeFaces mitteilen, wie viele Gesamtzeilen existieren.
+                this.setRowCount(list.size());
+
+                // Wenn die Seite leer wäre:
+                if (first > end) {
+                    page = Collections.emptyList();
+                } else {
+	                // Nur den relevanten Abschnitt zurückgeben.
+	                page =  list.subList(first, end);
+                }
+                return page;
+	        }
+	        
+	    };
+	}
+
 	private void sortAndPaginate(List<Net> list, int first, int pageSize, Map<String, SortMeta> sortBy) {
         if (sortBy != null && !sortBy.isEmpty()) {
 
@@ -483,6 +549,41 @@ public class NetBean implements Serializable {
 	        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
 	                "Erfolgreich gespeichert",
 	                selectedNets.size() + " Geisternetze wurden als geborgen gemerkt.");
+	        FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
+        
+        selectedNets.clear();
+        gemeldetLazyNets.load(0, 10, null, null);  
+    }
+	
+	public void cancelNet() {
+        if (selectedNets == null || selectedNets.isEmpty()) {
+            FacesMessage msg = new FacesMessage(
+            		FacesMessage.SEVERITY_WARN,
+                    "Keine Netze ausgewählt", 
+                    "Bitte wählen Sie mindestens ein Netz aus.");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            return;
+        }
+    	    	
+    	int successCount = 0;
+    	
+        for (Net net: selectedNets) {
+        	try {
+        		netService.cancelNet(net);
+        		successCount ++;
+        	} catch (IllegalArgumentException ex) {
+                // Fehler für dieses Netz anzeigen
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Fehler bei Netz " + net.getId(),
+                                ex.getMessage()));
+        	}
+        }
+        if (successCount > 0) {
+	        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+	                "Erfolgreich gespeichert",
+	                selectedNets.size() + " Geisternetze wurden als verschollen gemerkt.");
 	        FacesContext.getCurrentInstance().addMessage(null, msg);
         }
         

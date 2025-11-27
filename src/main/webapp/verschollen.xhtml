@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<ui:composition template="/templates/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">Eigene zu bergende Geisternetze</ui:define>
+
+    <ui:define name="content">
+
+        <h:panelGroup >
+            <div class="page-container">
+                <h2 class="home-title">Eigene zu bergende Geisternetze</h2>
+                
+                <h:form id="verschollenForm">
+
+					<p:commandButton value="Bergung verschollen" 
+									 action="#{netBean.cancelNet}"
+									 update="messages, verschollenTable"/>
+					<p:growl id="messages" showDetail="true" life="3500"/>
+
+	                <p:dataTable id="verschollenTable" var="n" value="#{netBean.verschollenLazyNets}"
+	                             selection="#{netBean.selectedNets}" rowKey="#{n.id}"
+	                             paginator="true" rows="10" selectionPageOnly="false" selectionRowMode="none" callNavigation="true"
+	                             
+	                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+	                             rowsPerPageTemplate="5,10,20,50"
+	                             rowsPerPageDropdown="true"
+	                             emptyMessage="Keine Geisternetze gefunden">
+	                             
+						<p:column selectionMode="multiple" selectionBox="true" style="width:10px"/>
+						
+	                    <p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
+	                    <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
+	                    <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
+	                    <p:column headerText="Größe" sortBy="#{n.size.name}">#{n.size.name}</p:column>
+                		<p:column headerText="Status" sortBy="#{n.status.name}">#{n.status.name}</p:column>
+	                    <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
+	                </p:dataTable>
+	                
+					<p:commandButton value="Bergung verschollen" 
+									 action="#{netBean.cancelNet}"
+									 update="messages, verschollenTable"/>
+	       		</h:form>
+            </div>
+        </h:panelGroup>
+
+    </ui:define>
+</ui:composition>

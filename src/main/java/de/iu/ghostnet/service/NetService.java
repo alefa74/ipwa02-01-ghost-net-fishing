@@ -124,6 +124,37 @@ public class NetService {
     	netDAO.save(net);
     }
 
+    public void cancelNet(Net net) {
+        // Net aus der DB erneut laden, um Race Conditions zu vermeiden
+        Net fresh = netDAO.findById(net.getId());
+
+        if (fresh == null) {
+            throw new IllegalArgumentException("Das ausgewählte Netz existiert nicht mehr.");
+        }
+
+        // Darf nicht GEBORGEN sein
+        if ("GEBORGEN".equals(fresh.getStatus().getName())) {
+            throw new IllegalArgumentException(
+                    "Das Netz wurde bereits geborgen."
+            );
+        }
+        // Darf nicht VERSCHOLLEN sein
+        if ("VERSCHOLLEN".equals(fresh.getStatus().getName())) {
+            throw new IllegalArgumentException(
+                    "Das Netz wurde bereits als verschollen angemerkt."
+            );
+        }
+        
+        // Alles OK? Dann verschollen
+        Status verschollen = statusService.findByName("VERSCHOLLEN");
+
+        fresh.setStatus(verschollen);
+        fresh.setLostAt(LocalDateTime.now());   
+        
+    	netDAO.save(net);
+    }
+
+    
     public List<Net> getAll() {
         return netDAO.findAll();
     }
@@ -134,5 +165,9 @@ public class NetService {
     
     public List<Net> getAllAssigned(String statusName, Long recovererId) {
     	return netDAO.findByStatusAndPerson(statusName, recovererId);
+    }
+    
+    public List<Net> getAllAvailableNets() {
+    	return netDAO.findByStatusName("GEMELDET", "BERGUNG_BEVORSTEHEND");
     }
 }
