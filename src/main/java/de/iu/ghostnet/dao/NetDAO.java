@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
@@ -36,6 +37,13 @@ public class NetDAO {
         return em.createQuery(
                 "SELECT n FROM Net n WHERE n.status.name = :name", Net.class)
                 .setParameter("name", statusName)
+                .getResultList();
+    }
+ 
+    public List<Net> findByStatusName(String... statusNames) {
+        return em.createQuery(
+                "SELECT n FROM Net n WHERE n.status.name IN :name", Net.class)
+                .setParameter("name", Arrays.asList(statusNames))
                 .getResultList();
     }
  
