@@ -10,8 +10,6 @@ import de.iu.ghostnet.service.SizeService;
 import de.iu.ghostnet.service.StatusService;
 import de.iu.ghostnet.service.PersonTypeService;
 
-import org.primefaces.model.LazyDataModel;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -25,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.primefaces.model.*;
 
@@ -44,10 +43,10 @@ public class NetBean implements Serializable {
     @Inject
     private LoginBean loginBean;
     
-    private LazyDataModel<Net> lazyNets;
-    private LazyDataModel<Net> gemeldetLazyNets;
-    private LazyDataModel<Net> angemeldetLazyNets;
-    private LazyDataModel<Net> verschollenLazyNets;
+    private LazyDataModel<Net> allNets;
+    private LazyDataModel<Net> reportedNets;
+    private LazyDataModel<Net> myAssignedNets;
+    private LazyDataModel<Net> availableNets;
     
     private Long selectedSizeId;    
     private Net net = new Net();
@@ -64,11 +63,45 @@ public class NetBean implements Serializable {
 	public void init() {
 		allStatuses = statusService.getAllStatuses();
 		allPersonTypes = personTypeService.getAllPersonTypes();
-		loadLazyModel();
-		loadGemeldetLazyModel();
-		loadAngemeldetLazyModel();
-		verschollenLazyModel();
+		allNets = NetView.ALL.createModel(netService);
+		reportedNets = NetView.REPORTED.createModel(netService);
+		myAssignedNets = NetView.MY_ASSIGNED.createModel(netService, loginBean);
+		availableNets = NetView.AVAILABLE.createModel(netService);
 	}
+
+	private enum NetView {
+        ALL("All Ghost Nets", 
+        		(ns, lb) -> ns.getAll()),
+        REPORTED("Reported Nets", 
+        		(ns, lb) -> ns.getAllByStatus("GEMELDET")),
+        MY_ASSIGNED("My Assigned Recoveries", 
+        		(ns, lb) -> lb != null && lb.getPerson() != null
+        		? ns.getAllAssigned("BERGUNG_BEVORSTEHEND", lb.getPerson().getId())
+        		: Collections.emptyList()),
+        AVAILABLE("Available Nets", 
+        		(ns, lb) -> ns.getAllAvailableNets());
+
+        private final String title;
+        private final DataSupplier supplier;
+
+        NetView(String title, DataSupplier supplier) {
+            this.title = title;
+            this.supplier = supplier;
+        }
+
+        public LazyDataModel<Net> createModel(NetService netService) {
+            return createLazyModel(() -> supplier.get(netService, null));
+        }
+
+        public LazyDataModel<Net> createModel(NetService netService, LoginBean loginBean) {
+            return createLazyModel(() -> supplier.get(netService, loginBean));
+        }
+    }
+	
+	@FunctionalInterface
+	private interface DataSupplier {
+        List<Net> get(NetService netService, LoginBean loginBean);
+    }	
 	
 	// getter & setter
     public Net getNet() {
@@ -86,25 +119,25 @@ public class NetBean implements Serializable {
 	public Long getSelectedSizeId() {
 		return selectedSizeId;
 	}
+
 	public void setSelectedSizeId(Long selectedSizeId) {
 		this.selectedSizeId = selectedSizeId;
 	}
 
-
-	public LazyDataModel<Net> getLazyNets() {
-		return lazyNets;
+	public LazyDataModel<Net> getReportedNets() {
+		return reportedNets;
 	}
 
-	public LazyDataModel<Net> getGemeldetLazyNets() {
-		return gemeldetLazyNets;
+	public LazyDataModel<Net> getMyAssignedNets() {
+		return myAssignedNets;
 	}
 
-    public LazyDataModel<Net> getAngemeldetLazyNets() {
-		return angemeldetLazyNets;
+	public LazyDataModel<Net> getAvailableNets() {
+		return availableNets;
 	}
 
-	public LazyDataModel<Net> getVerschollenLazyNets() {
-		return verschollenLazyNets;
+	public LazyDataModel<Net> getAllNets() {
+		return allNets;
 	}
 
 	public Person getReporter() {
@@ -123,10 +156,6 @@ public class NetBean implements Serializable {
 		this.anonymous = anonymous;
 	}
 
-    public List<Net> getAllNets() {
-        return netService.getAll();
-    }
-    
     public List<Size> getAllSizes() {
     	if (allSizes == null) {
     		allSizes = sizeService.getAllSizes();
@@ -155,226 +184,61 @@ public class NetBean implements Serializable {
 	    }
 	}
 	
-	private void loadLazyModel() {
+	private static LazyDataModel<Net> createLazyModel(Supplier<List<Net>> dataSupplier) {
 
-        lazyNets = new LazyDataModel<Net>() {
+        return new LazyDataModel<>() {
+        	private List<Net> currentPage;
+        	
+        	@Override
+        	public String getRowKey(Net net) {
+        		return net!= null && net.getId() != null ? net.getId().toString() : null;
+        	}
 
             @Override
             public int count(Map<String, FilterMeta> filterBy) {
                 // Anzahl aller verfügbaren Netze.
-                return netService.getAll().size();
+                return dataSupplier.get().size();
             }
 
+            @Override
+            public Net getRowData(String rowKey) {
+                if (currentPage == null || rowKey == null) return null;
+                return currentPage.stream()
+                        .filter(n -> n.getId() != null && n.getId().toString().equals(rowKey))
+                        .findFirst()
+                        .orElse(null);
+            }
+            
             @Override
             public List<Net> load(int first, int pageSize,
                                   Map<String, SortMeta> sortBy,
                                   Map<String, FilterMeta> filterBy) {
                 // Gesamte Liste aller Netze aus Service laden
-                List<Net> list = netService.getAll();
+                List<Net> fullList = dataSupplier.get();
 
                 // SORTIERUNG
-                sortAndPaginate(list, first, pageSize, sortBy);
+                sortAndPaginate(fullList, sortBy);
 
                 // PAGINIERUNG auf Basis von first + pageSize
-                int end = Math.min(first + pageSize, list.size());
-
-                // PrimeFaces mitteilen, wie viele Gesamtzeilen existieren.
-                this.setRowCount(list.size());
+                int end = Math.min(first + pageSize, fullList.size());
 
                 // Wenn die Seite leer wäre:
                 if (first > end) {
-                    return Collections.emptyList();
+                	currentPage = Collections.emptyList();
+                } else {
+                	currentPage = fullList.subList(first, end);
                 }
 
+                // PrimeFaces mitteilen, wie viele Gesamtzeilen existieren.
+                setRowCount(fullList.size());
+
                 // Nur den relevanten Abschnitt zurückgeben.
-                return list.subList(first, end);
+                return currentPage;
             }
         };
     }
 	
-	private void loadGemeldetLazyModel() {
-		gemeldetLazyNets = new LazyDataModel<Net>() {
-			
-			private List<Net> page;
-
-			@Override
-	        public String getRowKey(Net net) {
-	            return net != null && net.getId() != null
-	                    ? net.getId().toString()
-	                    : null;
-	        }
-			
-			@Override
-	        public int count(Map<String, FilterMeta> filterBy) {
-	            return netService.getAllByStatus("GEMELDET").size();
-	        }
-			
-	        @Override
-	        public Net getRowData(String rowKey) {        	
-	            if (rowKey == null || page == null)
-	                return null;
-
-	            for (Net n : page) {
-	                if (n.getId() != null && n.getId().toString().equals(rowKey)) {
-	                    return n;
-	                }
-	            }
-	            return null;
-	        }
-
-
-	        @Override
-	        public List<Net> load(int first, int pageSize,
-	                              Map<String, SortMeta> sortBy,
-	                              Map<String, FilterMeta> filterBy) {
-	        	// Nur Netze mit Status Gemeldet
-	            List<Net> list = netService.getAllByStatus("GEMELDET");
-	            
-                // SORTIERUNG
-                sortAndPaginate(list, first, pageSize, sortBy);
-
-                // PAGINIERUNG auf Basis von first + pageSize
-                int end = Math.min(first + pageSize, list.size());
-
-                // PrimeFaces mitteilen, wie viele Gesamtzeilen existieren.
-                this.setRowCount(list.size());
-
-                // Wenn die Seite leer wäre:
-                if (first > end) {
-                    page = Collections.emptyList();
-                } else {
-	                // Nur den relevanten Abschnitt zurückgeben.
-	                page =  list.subList(first, end);
-                }
-                
-                return page;
-	        }
-	        
-	    };
-	}
-	
-	private void loadAngemeldetLazyModel() {
-		angemeldetLazyNets = new LazyDataModel<Net>() {
-			
-			private List<Net> page;
-
-			@Override
-	        public String getRowKey(Net net) {
-	            return net != null && net.getId() != null
-	                    ? net.getId().toString()
-	                    : null;
-	        }
-			
-			@Override
-	        public int count(Map<String, FilterMeta> filterBy) {
-	            return netService.getAllAssigned("BERGUNG_BEVORSTEHEND",loginBean.getPerson().getId()).size();
-	        }
-			
-	        @Override
-	        public Net getRowData(String rowKey) {        	
-	            if (rowKey == null || page == null)
-	                return null;
-
-	            for (Net n : page) {
-	                if (n.getId() != null && n.getId().toString().equals(rowKey)) {
-	                    return n;
-	                }
-	            }
-	            return null;
-	        }
-
-
-	        @Override
-	        public List<Net> load(int first, int pageSize,
-	                              Map<String, SortMeta> sortBy,
-	                              Map<String, FilterMeta> filterBy) {
-	        	// Nur Netze mit Status Bergun_bevorstehend und eingetragen als logged in Person
-	            List<Net> list = netService.getAllAssigned("BERGUNG_BEVORSTEHEND",loginBean.getPerson().getId());
-	            
-                // SORTIERUNG
-                sortAndPaginate(list, first, pageSize, sortBy);
-
-                // PAGINIERUNG auf Basis von first + pageSize
-                int end = Math.min(first + pageSize, list.size());
-
-                // PrimeFaces mitteilen, wie viele Gesamtzeilen existieren.
-                this.setRowCount(list.size());
-
-                // Wenn die Seite leer wäre:
-                if (first > end) {
-                    page = Collections.emptyList();
-                } else {
-	                // Nur den relevanten Abschnitt zurückgeben.
-	                page =  list.subList(first, end);
-                }
-                
-                return page;
-	        }
-	        
-	    };
-	}
-	
-	private void verschollenLazyModel() {
-		verschollenLazyNets = new LazyDataModel<Net>() {
-			
-			private List<Net> page;
-
-			@Override
-	        public String getRowKey(Net net) {
-	            return net != null && net.getId() != null
-	                    ? net.getId().toString()
-	                    : null;
-	        }
-			
-			@Override
-	        public int count(Map<String, FilterMeta> filterBy) {
-	            return netService.getAllByStatus("GEMELDET").size();
-	        }
-			
-	        @Override
-	        public Net getRowData(String rowKey) {        	
-	            if (rowKey == null || page == null)
-	                return null;
-
-	            for (Net n : page) {
-	                if (n.getId() != null && n.getId().toString().equals(rowKey)) {
-	                    return n;
-	                }
-	            }
-	            return null;
-	        }
-
-
-	        @Override
-	        public List<Net> load(int first, int pageSize,
-	                              Map<String, SortMeta> sortBy,
-	                              Map<String, FilterMeta> filterBy) {
-	        	// Nur Netze mit die nicht verschollen oder geborgen sind
-	            List<Net> list = netService.getAllAvailableNets();
-	            
-                // SORTIERUNG
-                sortAndPaginate(list, first, pageSize, sortBy);
-
-                // PAGINIERUNG auf Basis von first + pageSize
-                int end = Math.min(first + pageSize, list.size());
-
-                // PrimeFaces mitteilen, wie viele Gesamtzeilen existieren.
-                this.setRowCount(list.size());
-
-                // Wenn die Seite leer wäre:
-                if (first > end) {
-                    page = Collections.emptyList();
-                } else {
-	                // Nur den relevanten Abschnitt zurückgeben.
-	                page =  list.subList(first, end);
-                }
-                return page;
-	        }
-	        
-	    };
-	}
-
-	private void sortAndPaginate(List<Net> list, int first, int pageSize, Map<String, SortMeta> sortBy) {
+	private static void sortAndPaginate(List<Net> list, Map<String, SortMeta> sortBy) {
         if (sortBy != null && !sortBy.isEmpty()) {
 
             SortMeta meta = sortBy.values().iterator().next();
@@ -391,7 +255,7 @@ public class NetBean implements Serializable {
         }	
 	}
 
-    private Comparator<Net> getComparator(String field) {
+    private static Comparator<Net> getComparator(String field) {
         // Liefert je nach Feldnamen den passenden Comparator.
         switch (field) {
             case "id":
@@ -449,8 +313,9 @@ public class NetBean implements Serializable {
 	        	);
 	        
 	        resetForm();
-	        loadLazyModel();
 	        
+	        allNets = NetView.ALL.createModel(netService);
+	        reportedNets = NetView.REPORTED.createModel(netService);
 		} catch (IllegalArgumentException ex) {
 	        FacesContext.getCurrentInstance().addMessage(null,
 	                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler", ex.getMessage())
@@ -508,7 +373,8 @@ public class NetBean implements Serializable {
         }
         
         selectedNets.clear();
-        gemeldetLazyNets.load(0, 10, null, null);  
+        allNets = NetView.ALL.createModel(netService);
+        myAssignedNets = NetView.MY_ASSIGNED.createModel(netService, loginBean);
     }
 
 	public void reportRecovery() {
@@ -553,7 +419,9 @@ public class NetBean implements Serializable {
         }
         
         selectedNets.clear();
-        gemeldetLazyNets.load(0, 10, null, null);  
+        
+        allNets = NetView.ALL.createModel(netService);
+        myAssignedNets = NetView.MY_ASSIGNED.createModel(netService, loginBean);
     }
 	
 	public void cancelNet() {
@@ -588,6 +456,8 @@ public class NetBean implements Serializable {
         }
         
         selectedNets.clear();
-        gemeldetLazyNets.load(0, 10, null, null);  
+
+        allNets = NetView.ALL.createModel(netService);
+        reportedNets = NetView.REPORTED.createModel(netService);
     }
 }

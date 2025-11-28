@@ -21,7 +21,7 @@
 									 update="messages, geborgenTable"/>
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
-	                <p:dataTable id="geborgenTable" var="n" value="#{netBean.angemeldetLazyNets}"
+	                <p:dataTable id="geborgenTable" var="n" value="#{netBean.myAssignedNets}"
 	                             selection="#{netBean.selectedNets}" rowKey="#{n.id}"
 	                             paginator="true" rows="10" selectionPageOnly="false" selectionRowMode="none" callNavigation="true"
 	                             

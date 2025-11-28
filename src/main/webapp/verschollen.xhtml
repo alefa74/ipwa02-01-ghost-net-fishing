@@ -21,7 +21,7 @@
 									 update="messages, verschollenTable"/>
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
-	                <p:dataTable id="verschollenTable" var="n" value="#{netBean.verschollenLazyNets}"
+	                <p:dataTable id="verschollenTable" var="n" value="#{netBean.availableNets}"
 	                             selection="#{netBean.selectedNets}" rowKey="#{n.id}"
 	                             paginator="true" rows="10" selectionPageOnly="false" selectionRowMode="none" callNavigation="true"
 	                             

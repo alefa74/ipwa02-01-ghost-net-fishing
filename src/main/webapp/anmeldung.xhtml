@@ -21,7 +21,7 @@
 									 update="messages, anzumeldenTable"/>
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
-	                <p:dataTable id="anzumeldenTable" var="n" value="#{netBean.gemeldetLazyNets}"
+	                <p:dataTable id="anzumeldenTable" var="n" value="#{netBean.reportedNets}"
 	                             selection="#{netBean.selectedNets}" rowKey="#{n.id}"
 	                             paginator="true" rows="10" selectionPageOnly="false" selectionRowMode="none" callNavigation="true"
 	                             
