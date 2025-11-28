@@ -30,7 +30,7 @@
                 <h:form id="verschollenForm">
 
                     <!-- Button zum Markieren ausgewählter Netze als verschollen -->
-					<p:commandButton value="Bergung verschollen" 
+					<p:commandButton value="Netz verschollen" 
 									 action="#{netBean.cancelNet}"
 									 update="messages, verschollenTable"/>
                     <!-- Growl für Erfolgs-/Fehlermeldungen -->
@@ -46,6 +46,7 @@
 	                             rowsPerPageDropdown="true"
 	                             resizableColumns="true"
 	                             showGridlines="true"
+	                             scrollable="true"
 	                             emptyMessage="Keine Geisternetze gefunden">
 	                             
                         <!-- Mehrfachauswahl über Checkbox -->
@@ -61,7 +62,7 @@
 	                </p:dataTable>
 	                
                     <!-- Button unten nochmal zur besseren Usability -->
-					<p:commandButton value="Bergung verschollen" 
+					<p:commandButton value="Netz verschollen" 
 									 action="#{netBean.cancelNet}"
 									 update="messages, verschollenTable"/>
 	       		</h:form>

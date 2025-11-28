@@ -48,10 +48,23 @@ main {
     padding: 0 !important;
 }
 
+/* Standardmäßiges Ausblenden des Hamburger-Menüs */
+.hamburgerMenu { 
+    display: none !important; 
+}
+
+/* Mobile Ansicht: linke und rechte Navigationsleisten ausblenden, Hamburger-Menü anzeigen */
+@media screen and (max-width: 1024px) {
+    .nav-left, .nav-right { 
+        display: none !important; 
+    }
+    .hamburgerMenu { 
+        display: inline-block !important; 
+    }
+}
 
 
-
-/* ====== ERFASSEN PAGINA LAYOUT ====== */
+/* ====== ERFASSEN SEITEN LAYOUT ====== */
 .label-column {
     width: 150px;
     text-align: right;
@@ -140,3 +153,31 @@ main {
 	color: #555;
 	font-size: 1.1rem;
 }
+
+/* ====== RESPONSIVES FORMULAR BEI SCHMALEN BILDSCHIRMEN ====== */
+
+/* 1. Fehlernachrichten bei schmalen Bildschirmen ausblenden */
+@media screen and (max-width: 920px) {
+    #netForm .error-column .ui-message {
+        display: none !important; /* Inline messages verbergen */
+    }
+}
+
+/* 2. Formulare stapelen bei sehr schmalen Bildschirmen */
+@media screen and (max-width: 500px) {
+    #netForm .ui-panelgrid {
+        display: flex !important;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    #netForm .label-column,
+    #netForm .input-column,
+    #netForm .error-column {
+        width: 100% !important;
+        min-width: 0 !important;
+        display: block !important;
+    }
+}
+
+

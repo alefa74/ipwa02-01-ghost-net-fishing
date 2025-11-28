@@ -11,15 +11,15 @@
 			<p:menubar styleClass="nav-left">
 			    <p:menuitem value="Startseite" outcome="/index" icon="pi pi-home"/>
 			
-			    <p:menuitem value="Geisternetze erfassen" outcome="/netzmelden" icon="pi pi-plus-circle"/>
+			    <p:menuitem value="Netze erfassen" outcome="/netzmelden" icon="pi pi-plus-circle"/>
 			    
-			    <p:menuitem value="Geisternetzen ansehen" outcome="/bergung" icon="pi pi-search"/>
+			    <p:menuitem value="Netze ansehen" outcome="/bergung" icon="pi pi-search"/>
 
-			    <p:menuitem value="Als Berger anmelden" outcome="/zuweisen" icon="pi pi-user-plus"/>
+			    <p:menuitem value="Bergung zuweisen" outcome="/zuweisen" icon="pi pi-user-plus"/>
 
-			    <p:menuitem value="Geisternetz bergen" outcome="/geborgen" icon="pi pi-check-circle"/>
+			    <p:menuitem value="Bergung eintragen" outcome="/geborgen" icon="pi pi-check-circle"/>
 
-			    <p:menuitem value="Verschollen melden" outcome="/verschollen" icon="pi pi-times-circle"/>
+			    <p:menuitem value="Netze verschollen" outcome="/verschollen" icon="pi pi-times-circle"/>
 			</p:menubar>
 
 			<!-- Benutzerbereich: zeigt Login-Status und zugehörige Aktionen -->
@@ -41,6 +41,38 @@
 				    </p:menuitem>
 				</p:submenu>
 			</p:menubar>
+
+            <!-- Hamburger menu für mobile Ansicht -->
+            <p:commandButton styleClass="hamburgerMenu" id="hamburgerMenu" value="Menu" type="button" icon="pi pi-bars" />
+            <p:menu overlay="true" trigger="hamburgerMenu" my="left top" at="left bottom">
+			    <p:menuitem value="Startseite" outcome="/index" icon="pi pi-home"/>
+			
+			    <p:menuitem value="Netze erfassen" outcome="/netzmelden" icon="pi pi-plus-circle"/>
+			    
+			    <p:menuitem value="Netzen ansehen" outcome="/bergung" icon="pi pi-search"/>
+
+			    <p:menuitem value="Bergung zuweisen" outcome="/zuweisen" icon="pi pi-user-plus"/>
+
+			    <p:menuitem value="Bergung eintragen" outcome="/geborgen" icon="pi pi-check-circle"/>
+
+			    <p:menuitem value="Netze verschollen" outcome="/verschollen" icon="pi pi-times-circle"/>
+
+                <p:separator />
+
+   			    <p:menuitem value="Abmelden" 
+   			    			icon="pi pi-sign-out" 
+   			    			action="#{loginBean.logout}" 
+   			    			ajax="false"
+			                rendered="#{loginBean.loggedIn}" />
+			    
+				<!-- Login-Link mit Rücksprung zur aktuellen Seite nach erfolgreichem Login -->
+			    <p:menuitem value="Login" 
+			    			icon="pi pi-sign-in" 
+			    			outcome="/login" 
+			                rendered="#{!loginBean.loggedIn}">
+			    	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />
+			    </p:menuitem>
+            </p:menu>
         </div>
 	</h:form>
 
