@@ -4,8 +4,10 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+	<!-- Navigationsbereich der Anwendung mit Menüs für alle Hauptfunktionen -->
 	<h:form id="navForm">	
 		<div class="nav-container">
+			<!-- Linke Hauptnavigation mit den Kernfunktionen -->
 			<p:menubar styleClass="nav-left">
 			    <p:menuitem value="Startseite" outcome="/index" icon="pi pi-home"/>
 			
@@ -13,21 +15,24 @@
 			    
 			    <p:menuitem value="Geisternetzen ansehen" outcome="/bergung" icon="pi pi-search"/>
 
-			    <p:menuitem value="Als Berger anmelden" outcome="/anmeldung" icon="pi pi-user-plus"/>
+			    <p:menuitem value="Als Berger anmelden" outcome="/zuweisen" icon="pi pi-user-plus"/>
 
 			    <p:menuitem value="Geisternetz bergen" outcome="/geborgen" icon="pi pi-check-circle"/>
 
 			    <p:menuitem value="Verschollen melden" outcome="/verschollen" icon="pi pi-times-circle"/>
 			</p:menubar>
 
+			<!-- Benutzerbereich: zeigt Login-Status und zugehörige Aktionen -->
 			<p:menubar styleClass="nav-right">
 				<p:submenu label="#{loginBean.loggedIn ? loginBean.fullName : 'Anonym'}" icon="pi pi-user">
+					<!-- Anzeige des eingeloggten Benutzers oder 'Anonym' -->
 	   			    <p:menuitem value="Abmelden" 
 	   			    			icon="pi pi-sign-out" 
 	   			    			action="#{loginBean.logout}" 
 	   			    			ajax="false"
 				                rendered="#{loginBean.loggedIn}" />
 				    
+					<!-- Login-Link mit Rücksprung zur aktuellen Seite nach erfolgreichem Login -->
 				    <p:menuitem value="Login" 
 				    			icon="pi pi-sign-in" 
 				    			outcome="/login" 

@@ -6,17 +6,20 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
+    <!-- Seitentitel für Layout -->
     <ui:define name="title">Geisternetze erfassen</ui:define>
 
     <ui:define name="content">
     	<div class="page-container">
     
+            <!-- Hauptüberschrift -->
 		    <h2 class="home-title">Geisternetze erfassen</h2>
 		    
+            <!-- Growl für Fehlermeldungen -->
 			<p:growl id="growl" showDetail="true" life="3500" />
 			
 		    <h:form id="netForm">
-		
+                <!-- PanelGrid für Formulareingaben -->	
 		        <h:panelGrid columns="3" cellpadding="5" columnClasses="label-column, input-column, error-column">
 		            <p:outputLabel value="Breitengrad" for="latitude"/>
 					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
@@ -64,6 +67,8 @@
 					<p:outputLabel value="" for=""/>
 					                    	
 		        </h:panelGrid>   
+
+                <!-- Persönliche Daten -->
 		        <h:panelGrid id="personalPanel" columns="3" cellpadding="5" columnClasses="label-column, input-column, error-column">
                     <p:outputLabel value="Vorname" for="reporterFirstName"/>
 					<p:inputText id="reporterFirstName" 
@@ -104,6 +109,7 @@
 		        </h:panelGrid>   
 		    </h:form>
 		
+            <!-- Tabelle aller Geisternetze -->
 		    <h3 class="home-section-title">Alle Geisternetze:</h3>
 		    <p:dataTable id="netTable" 
 		    			 value="#{netBean.allNets}" 

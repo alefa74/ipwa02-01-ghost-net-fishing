@@ -5,13 +5,14 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
+    <!-- Seitentitel für Layout -->
     <ui:define name="title">Startseite</ui:define>
 
     <ui:define name="content">
 
         <div class="page-container">
 
-            <!-- Willkommen Überschrift -->
+            <!-- Hauptüberschrift -->
             <h2 class="home-title">Willkommen bei Ghost Net Fishing</h2>
 
             <!-- Einleitungstext -->
@@ -21,40 +22,40 @@
                 Plastikmülls in den Ozeanen aus. Mit dieser Plattform wollen wir gemeinsam etwas dagegen tun!
             </p>
 
-            <!-- Was kannst du hier tun? -->
+            <!-- Abschnitt: Aktionen, die Benutzer ausführen können -->
             <h3 class="home-section-title">Was kannst du hier tun?</h3>
 
 			<h:form>
 				<div class="home-actions-grid">
 				
-				    <!-- 1. Geisternetz melden -->
+				    <!-- Button: Geisternetz melden -->
 				    <p:button outcome="/netzmelden"
 				              styleClass="ui-button-primary"
 				              icon="pi pi-plus-circle"
 				              iconPos="left"
 				              value="Geisternet melden (anonym möglich)"/>
-				    <!-- 2. Zu bergende Geisternetze ansehen -->
+				    <!-- Button: Zu bergende Geisternetze ansehen -->
 				    <p:button outcome="/bergung"
 				              styleClass="ui-button-success"
 				              icon="pi pi-search"
 				              iconPos="left"
 				              value="Zu bergende Geisternetze ansehen"/>
 				
-				    <!-- 3. Mich für die Bergung eintragen -->
-				    <p:button outcome="/anmeldung"
+				    <!-- Button: Zuweisen der Bergung  -->
+				    <p:button outcome="/zuweisen"
 				              styleClass="ui-button-info"
 				              icon="pi pi-user-plus"
 				              iconPos="left"
 				              value="Mich für die Bergung eintragen"/>
 				
-				    <!-- 4. Geisternetz als geborgen melden -->
+				    <!-- Button: Geisternetz als geborgen melden -->
 				    <p:button outcome="/geborgen"
 				              styleClass="ui-button-warning"
 				              icon="pi pi-check-circle"
 				              iconPos="left"
 				              value="Geisternetz als geborgen melden"/>
 				
-				    <!-- 5. Geisternetz als verschollen melden -->
+				    <!-- Button: Geisternetz als verschollen melden -->
 				    <p:button outcome="/verschollen"
 				              styleClass="ui-button-danger"
 				              icon="pi pi-times-circle"
@@ -65,7 +66,7 @@
 
 			</h:form>
 			
-			<!-- Abschließender Motivationssatz -->
+			<!-- Motivationssatz am Ende -->
             <p class="home-footer-text">
                 <strong>Jede Meldung und jede Bergung zählt</strong> –
                 gemeinsam machen wir die Meere ein Stück sauberer! 🌊

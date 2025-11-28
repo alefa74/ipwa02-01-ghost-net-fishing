@@ -17,16 +17,19 @@ public class NetDAO {
     private EntityManager em;
 
     public void save(Net net) {
+        // Persistiert ein neues Geisternetz
     	em.getTransaction().begin();
     	em.persist(net);
     	em.getTransaction().commit();
     }
 
     public List<Net> findAll() {
+        // Liefert alle gespeicherten Netze zurück
         return em.createQuery("SELECT n FROM Net n", Net.class).getResultList();
     }
     
     public Status findStatusByName(String name) {
+        // Status anhand seines Namens finden
 		TypedQuery<Status> query = em.createQuery(
 				"SELECT s FROM Status s WHERE s.name = :name", Status.class);
 		query.setParameter("name", name);
@@ -34,6 +37,7 @@ public class NetDAO {
     }
 
     public List<Net> findByStatusName(String statusName) {
+        // Sucht Netze mit einem bestimmten Statusnamen
         return em.createQuery(
                 "SELECT n FROM Net n WHERE n.status.name = :name", Net.class)
                 .setParameter("name", statusName)
@@ -41,6 +45,7 @@ public class NetDAO {
     }
  
     public List<Net> findByStatusName(String... statusNames) {
+        // Sucht Netze, deren Status in einer angegebenen Liste enthalten ist
         return em.createQuery(
                 "SELECT n FROM Net n WHERE n.status.name IN :name", Net.class)
                 .setParameter("name", Arrays.asList(statusNames))
@@ -48,6 +53,7 @@ public class NetDAO {
     }
  
     public List<Net> findByStatusAndPerson(String statusName, Long recovererId) {
+        // Filtert Netze nach Status und zugewiesener Bergungsperson
         return em.createQuery(
                 "SELECT n FROM Net n WHERE n.status.name = :name AND n.recoverer.id = :recovererId", Net.class)
                 .setParameter("name", statusName)
@@ -56,6 +62,7 @@ public class NetDAO {
     }
 
     public Net findById(Long id) {
+        // Gibt ein Netz anhand der ID zurück oder null, wenn nicht gefunden
         List<Net> result = em.createQuery(
                 "SELECT n FROM Net n WHERE n.id = :id", Net.class)
                 .setParameter("id", id)

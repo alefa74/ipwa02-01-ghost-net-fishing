@@ -10,6 +10,7 @@ public class Status {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Name des Status, muss eindeutig sein
     @Column(nullable = false, unique = true)
     private String name;
 

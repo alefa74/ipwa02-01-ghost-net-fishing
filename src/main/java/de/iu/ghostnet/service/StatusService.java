@@ -14,10 +14,12 @@ public class StatusService {
     private StatusDAO statusDAO;
 
     public List<Status> getAllStatuses() {
+        // Holt alle Statuswerte aus der DB und initialisiert sie beim ersten Start
         List<Status> statuses = statusDAO.findAll();
 
         // INIT
         if (statuses.isEmpty()) {
+            // Initialbefüllung der Status-Tabelle
             statusDAO.save(new Status("GEMELDET"));
             statusDAO.save(new Status("BERGUNG_BEVORSTEHEND"));
             statusDAO.save(new Status("GEBORGEN"));

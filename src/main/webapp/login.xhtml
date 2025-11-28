@@ -6,19 +6,24 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+    <!-- View-Parameter für Redirect nach Login -->
    	<f:metadata>
    		<f:viewParam name="redirectTo" value="#{loginBean.redirectTo}" />
    	</f:metadata>
    	
+    <!-- Seitentitel -->
     <ui:define name="title">Login</ui:define>
 
     <ui:define name="content">
 
         <div class="page-container">
+            <!-- Überschrift -->
             <h2>Login für Bergende Personen</h2>
 
+            <!-- Growl für Fehlermeldungen -->
             <p:growl id="growl" showDetail="true" life="3500"/>
 
+             <!-- Login-Formular -->
             <h:form id="loginForm">
                 <h:panelGrid columns="2" cellpadding="5" columnClasses="label-column, input-column">
 

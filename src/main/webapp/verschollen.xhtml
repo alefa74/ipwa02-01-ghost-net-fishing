@@ -6,21 +6,26 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <ui:define name="title">Eigene zu bergende Geisternetze</ui:define>
+	<!-- Seite zur Meldung von verschollenen Geisternetzen -->
+    <ui:define name="title">Meldung von verschollen Geisternetze</ui:define>
 
     <ui:define name="content">
 
         <h:panelGroup >
             <div class="page-container">
-                <h2 class="home-title">Eigene zu bergende Geisternetze</h2>
+                <!-- Hauptüberschrift -->
+                <h2 class="home-title">Meldung von verschollen Geisternetze</h2>
                 
                 <h:form id="verschollenForm">
 
+                    <!-- Button zum Markieren ausgewählter Netze als verschollen -->
 					<p:commandButton value="Bergung verschollen" 
 									 action="#{netBean.cancelNet}"
 									 update="messages, verschollenTable"/>
+                    <!-- Growl für Erfolgs-/Fehlermeldungen -->
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
+                    <!-- Tabelle der verfügbaren Netze -->
 	                <p:dataTable id="verschollenTable" var="n" value="#{netBean.availableNets}"
 	                             selection="#{netBean.selectedNets}" rowKey="#{n.id}"
 	                             paginator="true" rows="10" selectionPageOnly="false" selectionRowMode="none" callNavigation="true"
@@ -30,8 +35,10 @@
 	                             rowsPerPageDropdown="true"
 	                             emptyMessage="Keine Geisternetze gefunden">
 	                             
+                        <!-- Mehrfachauswahl über Checkbox -->
 						<p:column selectionMode="multiple" selectionBox="true" style="width:10px"/>
 						
+                        <!-- Spaltenanzeige -->
 	                    <p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
 	                    <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
 	                    <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
@@ -40,6 +47,7 @@
 	                    <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
 	                </p:dataTable>
 	                
+                    <!-- Button unten nochmal zur besseren Usability -->
 					<p:commandButton value="Bergung verschollen" 
 									 action="#{netBean.cancelNet}"
 									 update="messages, verschollenTable"/>

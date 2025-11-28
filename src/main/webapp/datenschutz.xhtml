@@ -3,6 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui">
 
+	<!-- Datenschutz-Seite -->
     <ui:define name="title">Datenschutz</ui:define>
 
     <ui:define name="content">
@@ -10,7 +11,7 @@
 
         <div class="container">
 
-	        <!-- Hauptüberschrift -->
+	        <!-- Hauptpanel Datenschutz -->
 	        <p:panel header="Datenschutz" toggleable="false" styleClass="datenschutz-title">
 	
 	            <!-- Abschnitt I -->
@@ -33,6 +34,7 @@
 	                <!-- 2. Datenverarbeitung -->
 	                <p:panel header="2. Daten, die für die Bereitstellung der Website und die Erstellung der Protokolldateien verarbeitet werden" toggleable="true" styleClass="datenschutz-subpanel">
 	
+                        <!-- a. Welche Daten werden für welchen Zweck verarbeitet -->
 	                    <h:panelGroup layout="block" style="font-weight:bold;">a. Welche Daten werden für welchen Zweck verarbeitet?</h:panelGroup>
 	                    <h:panelGroup layout="block">Bei jedem Zugriff auf Inhalte der Website werden temporär folgende Daten gespeichert:</h:panelGroup>
 	                    <ul>
@@ -49,12 +51,15 @@
 	                    </ul>
 	                    <h:panelGroup layout="block">Diese Speicherung ist notwendig, um die Funktionsfähigkeit und Sicherheit der Website zu gewährleisten.</h:panelGroup>
 	
+                        <!-- b. Rechtsgrundlage -->
 	                    <h:panelGroup layout="block" style="font-weight:bold;">b. Rechtsgrundlage</h:panelGroup>
 	                    <h:panelGroup layout="block">Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 Buchstabe f DS-GVO.</h:panelGroup>
 	
+                        <!-- c. Weitere Empfänger -->
 	                    <h:panelGroup layout="block" style="font-weight:bold;">c. Weitere Empfänger</h:panelGroup>
 	                    <h:panelGroup layout="block">Die Website wird bei Alexandra Mustermann, Musterstraße 1, 12345 Musterstadt gehostet. Der Hoster empfängt die oben genannten Daten als Auftragsverarbeiter.</h:panelGroup>
 	
+                        <!-- d. Speicherdauer -->
 	                    <h:panelGroup layout="block" style="font-weight:bold;">d. Speicherdauer</h:panelGroup>
 	                    <h:panelGroup layout="block">Die Daten werden gelöscht, sobald sie für den Zweck ihrer Erhebung nicht mehr erforderlich sind. Protokolldateien werden maximal 24 Stunden aufbewahrt und anschließend endgültig gelöscht.</h:panelGroup>
 	

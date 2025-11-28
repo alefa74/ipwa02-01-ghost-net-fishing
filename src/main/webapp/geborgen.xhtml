@@ -6,21 +6,26 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+	<!-- Seite zum Eintragen geborgener Geisternetze -->
     <ui:define name="title">Eigene zu bergende Geisternetze</ui:define>
 
     <ui:define name="content">
 
+        <!-- Panel: nur sichtbar, wenn eingeloggt -->
         <h:panelGroup rendered="#{loginBean.loggedIn}">
             <div class="page-container">
+                <!-- Überschrift -->
                 <h2 class="home-title">Eigene zu bergende Geisternetze</h2>
                 
                 <h:form id="geborgenForm">
 
+                    <!-- Button Bergung eintragen -->
 					<p:commandButton value="Bergung eintragen" 
 									 action="#{netBean.reportRecovery}"
 									 update="messages, geborgenTable"/>
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
+                    <!-- Tabelle der zu bergenden Geisternetze -->
 	                <p:dataTable id="geborgenTable" var="n" value="#{netBean.myAssignedNets}"
 	                             selection="#{netBean.selectedNets}" rowKey="#{n.id}"
 	                             paginator="true" rows="10" selectionPageOnly="false" selectionRowMode="none" callNavigation="true"
@@ -30,8 +35,10 @@
 	                             rowsPerPageDropdown="true"
 	                             emptyMessage="Keine Geisternetze gefunden">
 	                             
+                        <!-- Auswahlspalte -->
 						<p:column selectionMode="multiple" selectionBox="true" style="width:10px"/>
 						
+                        <!-- Daten-Spalten -->
 	                    <p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
 	                    <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
 	                    <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
@@ -41,6 +48,7 @@
 	                    <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
 	                </p:dataTable>
 	                
+                    <!-- Button Bergung eintragen erneut -->
 					<p:commandButton value="Bergung eintragen" 
 									 action="#{netBean.reportRecovery}"
 									 update="messages, geborgenTable"/>
@@ -52,6 +60,7 @@
             <div class="page-container">
                 <h3 class="home-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h3>
                 <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary">
+                    <!-- Weiterleitung zurück zur aktuellen Seite nach Login -->
                 	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />
                 </p:button>
             </div>

@@ -30,6 +30,8 @@ import org.primefaces.model.*;
 @Named
 @ViewScoped
 public class NetBean implements Serializable {
+	// Initialisiert Listen und LazyDataModels nach Laden der View
+	// Stellt Daten für Tabellenansichten bereit (alle Netze, gemeldete Netze, zugewiesene Netze usw.)
 	private static final long serialVersionUID = 1L;
 
     @Inject
@@ -70,14 +72,18 @@ public class NetBean implements Serializable {
 	}
 
 	private enum NetView {
+		// Definiert verschiedene Tabellenansichten für Geisternetze und deren jeweilige Datenquellen
         ALL("All Ghost Nets", 
         		(ns, lb) -> ns.getAll()),
+        // Liefert nur gemeldete Netze (Status GEMELDET)
         REPORTED("Reported Nets", 
         		(ns, lb) -> ns.getAllByStatus("GEMELDET")),
+        // Liefert Netze, die dem eingeloggten Benutzer zur Bergung zugewiesen sind
         MY_ASSIGNED("My Assigned Recoveries", 
         		(ns, lb) -> lb != null && lb.getPerson() != null
         		? ns.getAllAssigned("BERGUNG_BEVORSTEHEND", lb.getPerson().getId())
         		: Collections.emptyList()),
+        // Liefert Netze, die noch zugewiesen werden können
         AVAILABLE("Available Nets", 
         		(ns, lb) -> ns.getAllAvailableNets());
 
@@ -177,6 +183,7 @@ public class NetBean implements Serializable {
 	}
 
 	public void clearPersonalIfAnonym() {
+		// Entfernt persönliche Daten, wenn der Melder anonym bleiben möchte
 	    if (anonymous) {
 	        reporter.setFirstName(null);
 	        reporter.setLastName(null);
@@ -185,23 +192,26 @@ public class NetBean implements Serializable {
 	}
 	
 	private static LazyDataModel<Net> createLazyModel(Supplier<List<Net>> dataSupplier) {
+		// Erzeugt ein LazyDataModel, das Paging und Sortierung clientseitig unterstützt
 
         return new LazyDataModel<>() {
         	private List<Net> currentPage;
         	
         	@Override
         	public String getRowKey(Net net) {
+        		// Eindeutiger Schlüssel eines Netzes für PrimeFaces-Tabellen
         		return net!= null && net.getId() != null ? net.getId().toString() : null;
         	}
 
             @Override
             public int count(Map<String, FilterMeta> filterBy) {
-                // Anzahl aller verfügbaren Netze.
+                // Gesamtanzahl der Elemente für die Tabelle berechnen
                 return dataSupplier.get().size();
             }
 
             @Override
             public Net getRowData(String rowKey) {
+            	// Datenzeile anhand des RowKeys aus der aktuellen Seite finden
                 if (currentPage == null || rowKey == null) return null;
                 return currentPage.stream()
                         .filter(n -> n.getId() != null && n.getId().toString().equals(rowKey))
@@ -213,7 +223,7 @@ public class NetBean implements Serializable {
             public List<Net> load(int first, int pageSize,
                                   Map<String, SortMeta> sortBy,
                                   Map<String, FilterMeta> filterBy) {
-                // Gesamte Liste aller Netze aus Service laden
+                // Gesamtliste laden, sortieren und auf die aktuelle Seite reduzieren
                 List<Net> fullList = dataSupplier.get();
 
                 // SORTIERUNG
@@ -239,6 +249,7 @@ public class NetBean implements Serializable {
     }
 	
 	private static void sortAndPaginate(List<Net> list, Map<String, SortMeta> sortBy) {
+		// Sortiert die Liste dynamisch anhand des in der Tabelle ausgewählten Spaltennamens
         if (sortBy != null && !sortBy.isEmpty()) {
 
             SortMeta meta = sortBy.values().iterator().next();
@@ -256,7 +267,7 @@ public class NetBean implements Serializable {
 	}
 
     private static Comparator<Net> getComparator(String field) {
-        // Liefert je nach Feldnamen den passenden Comparator.
+        // Liefert Comparator abhängig vom Feldnamen, das in der UI sortiert wird
         switch (field) {
             case "id":
                 return Comparator.comparing(
@@ -301,9 +312,10 @@ public class NetBean implements Serializable {
     
 	public String reportNewNet() {
 		try {
+			// Meldet ein neues Geisternetz und delegiert Validierung & Speicherung an den Service
 			netService.reportNewNet(net, reporter, anonymous, selectedSizeId);
 
-	    	// Erfolgsmeldung anzeigen
+	    	// Erfolgsmeldung nach erfolgreicher Speicherung anzeigen
 	        FacesContext.getCurrentInstance().addMessage(null, 
 	        		new FacesMessage(
 	    				FacesMessage.SEVERITY_INFO, 
@@ -312,6 +324,7 @@ public class NetBean implements Serializable {
 	        		)
 	        	);
 	        
+	     // Formular zurücksetzen, damit erneute Eingaben möglich sind
 	        resetForm();
 	        
 	        allNets = NetView.ALL.createModel(netService);
@@ -325,6 +338,7 @@ public class NetBean implements Serializable {
     }
 	
 	private void resetForm() {
+		// Markiert ausgewählte Netze als verschollen (Abbruch der Meldung)
 	    net = new Net();
 	    reporter = new Person();
 	    anonymous = false;
@@ -332,6 +346,7 @@ public class NetBean implements Serializable {
 	}
 	
 	public void assignNetForRecovery() {
+		// Sicherstellen, dass mindestens ein Netz ausgewählt ist
         if (selectedNets == null || selectedNets.isEmpty()) {
             FacesMessage msg = new FacesMessage(
             		FacesMessage.SEVERITY_WARN,
@@ -341,6 +356,7 @@ public class NetBean implements Serializable {
             return;
         }
     	
+        // Prüfen, ob ein Benutzer eingeloggt ist (nur Berger dürfen zuweisen)
     	if (loginBean.getPerson() == null) {
     		FacesMessage msg = new FacesMessage(
     				FacesMessage.SEVERITY_ERROR,
@@ -354,6 +370,7 @@ public class NetBean implements Serializable {
     	Person recoverer = loginBean.getPerson();
     	
         for (Net net: selectedNets) {
+        	// Jedes ausgewählte Netz einzeln zuweisen – Fehler je Netz abfangen
         	try {
         		netService.assignNetForRecovery(net, recoverer);
         		successCount ++;
@@ -372,12 +389,14 @@ public class NetBean implements Serializable {
 	        FacesContext.getCurrentInstance().addMessage(null, msg);
         }
         
+        // Tabellenmodelle aktualisieren, damit UI die neuen Zustände anzeigt
         selectedNets.clear();
         allNets = NetView.ALL.createModel(netService);
         myAssignedNets = NetView.MY_ASSIGNED.createModel(netService, loginBean);
     }
 
 	public void reportRecovery() {
+		// Markiert ausgewählte Netze als geborgen; nur für zugewiesene Berger erlaubt
         if (selectedNets == null || selectedNets.isEmpty()) {
             FacesMessage msg = new FacesMessage(
             		FacesMessage.SEVERITY_WARN,
@@ -425,6 +444,7 @@ public class NetBean implements Serializable {
     }
 	
 	public void cancelNet() {
+		// Markiert ausgewählte Netze als verschollen (Abbruch der Meldung)
         if (selectedNets == null || selectedNets.isEmpty()) {
             FacesMessage msg = new FacesMessage(
             		FacesMessage.SEVERITY_WARN,

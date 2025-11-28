@@ -14,20 +14,24 @@ public class PersonDAO {
     private EntityManager em;
 
     public void save(Person person) {
+        // Persistiert eine neue Person (Melder oder Bergungspersonal)
         em.getTransaction().begin();
         em.persist(person);
         em.getTransaction().commit();
     }
 
     public List<Person> findAll() {
+        // Liefert alle Personen aus der Datenbank
         return em.createQuery("SELECT p FROM Person p", Person.class).getResultList();
     }
 
     public Person findById(Long id) {
+        // Findet eine Person über ihre ID
         return em.find(Person.class, id);
     }
 
     public Person findByDetails(String firstName, String lastName, String phone) {
+        // Sucht eine Person anhand von Vorname, Nachname und Telefonnummer
         return em.createQuery(
                 "SELECT p FROM Person p WHERE p.firstName = :firstName AND p.lastName = :lastName AND p.phone = :phone", 
                 Person.class)

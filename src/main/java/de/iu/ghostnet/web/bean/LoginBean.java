@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Named
 @SessionScoped
 public class LoginBean implements Serializable {
+	// Session-Bean für Login-Status und Benutzeridentität (Berger)
 	private static final long serialVersionUID = 1L;
 
     @Inject
@@ -76,19 +77,23 @@ public class LoginBean implements Serializable {
 
 	public String login() {
         try {
-            person = personDAO.findByDetails(firstName, lastName, phone);
+        	// Benutzer anhand von Vorname, Nachname und Telefon suchen
+           person = personDAO.findByDetails(firstName, lastName, phone);
 
-            if (person != null && person.getPersonType().getName().equals("BERGER")) {
-                loggedIn = true;
-                if (redirectTo == null || redirectTo.isEmpty()) {
-                	return "/index?faces-redirect=true";
-                }
-                return redirectTo + "?faces-redirect=true";
-            }
-        } catch (Exception e) {
+           // Prüfen, ob gefundene Person die Rolle BERGER besitzt
+           if (person != null && person.getPersonType().getName().equals("BERGER")) {
+        	   loggedIn = true;
+        	// Weiterleitung nach Login, entweder zur angefragten Seite oder zur Startseite
+        	   if (redirectTo == null || redirectTo.isEmpty()) {
+        		   return "/index?faces-redirect=true";
+        	   }
+        	   return redirectTo + "?faces-redirect=true";
+           	}
+    	} catch (Exception e) {
             // ignorieren, Fehlermeldung wird unten angezeigt
         }
 
+        // Fehlversuch: Fehlermeldung für den Benutzer anzeigen
         loggedIn = false;
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -97,6 +102,7 @@ public class LoginBean implements Serializable {
     }
 
     public String logout() {
+    	// Sitzung vollständig invalidieren und Login-Daten zurücksetzen
         loggedIn = false;
         person = null;
         firstName = null;
@@ -107,6 +113,7 @@ public class LoginBean implements Serializable {
     }
     
     public String getFullName() {
+    	// Hilfsmethode zur Anzeige des vollständigen Namens in der UI
         if (person != null) {
             return person.getFirstName() + " " + person.getLastName();
         }

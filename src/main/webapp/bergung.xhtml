@@ -6,14 +6,18 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+	<!-- Übersicht der zu bergenden Geisternetze -->
     <ui:define name="title">Zu bergende Geisternetze</ui:define>
 
     <ui:define name="content">
 
+        <!-- Panel: nur sichtbar, wenn eingeloggt -->
         <h:panelGroup rendered="#{loginBean.loggedIn}">
             <div class="page-container">
+                <!-- Überschrift -->
                 <h2 class="home-title">Zu bergende Geisternetze</h2>
 
+                <!-- Tabelle gemeldeter Geisternetze -->
                 <p:dataTable id="gemeldetTable" value="#{netBean.reportedNets}" var="n"
                              paginator="true" rows="10"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -30,10 +34,12 @@
             </div>
         </h:panelGroup>
 
+        <!-- Panel: Nachricht, wenn nicht eingeloggt -->
         <h:panelGroup rendered="#{!loginBean.loggedIn}">
             <div class="page-container">
                 <h3 class="home-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h3>
                 <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary">
+                    <!-- Weiterleitung zurück zur aktuellen Seite nach Login -->
                 	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />
                 </p:button>
             </div>
