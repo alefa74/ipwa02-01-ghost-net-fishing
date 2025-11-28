@@ -37,7 +37,9 @@
 
                     <p:outputLabel value="Telefonnummer" for="phone"/>
                     <p:inputText id="phone" value="#{loginBean.phone}" required="true"
-                                 requiredMessage="Telefonnummer erforderlich"/>
+                                 requiredMessage="Telefonnummer erforderlich">
+					    <f:validator validatorId="phoneValidator" />
+					</p:inputText>
 
                     <h:outputText/>
                     <p:commandButton value="Login" action="#{loginBean.login}" update="growl" icon="pi pi-sign-in"/>

@@ -103,30 +103,11 @@
 					<p:commandButton value="Speichern" 
 									 icon="pi pi-save" 
 									 action="#{netBean.reportNewNet}" 
-									 update="netTable netForm growl" 
+									 update="netForm growl" 
 									 process="@form" 
 									 style="margin-top: 10px;"/>
 		        </h:panelGrid>   
 		    </h:form>
-		
-            <!-- Tabelle aller Geisternetze -->
-		    <h3 class="home-section-title">Alle Geisternetze:</h3>
-		    <p:dataTable id="netTable" 
-		    			 value="#{netBean.allNets}" 
-		    			 var="n" 
-		    			 paginator="true" 
-		    			 rows="10"
-			    		 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-	                     rowsPerPageTemplate="5,10,20,50"
-	                     rowsPerPageDropdown="true"
-	                     emptyMessage="Keine Geisternetze gefunden">
-				<p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
-                <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
-                <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
-                <p:column headerText="Größe" sortBy="#{n.size.name}">#{n.size.name}</p:column>
-                <p:column headerText="Status" sortBy="#{n.status.name}">#{n.status.name}</p:column>
-                <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
-	        </p:dataTable>
 		</div>
     </ui:define>
 </ui:composition>
