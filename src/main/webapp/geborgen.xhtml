@@ -15,8 +15,26 @@
         <h:panelGroup rendered="#{loginBean.loggedIn}">
             <div class="page-container">
                 <!-- Überschrift -->
-                <h2 class="home-title">Eigene zu bergende Geisternetze</h2>
+                <h2 class="page-title">Eigene zu bergende Geisternetze</h2>
                 
+				<!-- Begleittext -->
+				<p class="page-intro">
+				    Auf dieser Seite sehen Sie alle Geisternetze, die Ihnen zur Bergung zugewiesen sind. 
+				    Sie können ein Netz als geborgen eintragen, indem Sie eines oder mehrere Netze aus der Liste auswählen 
+				    und auf die Schaltfläche <strong>„Bergung eintragen“</strong> klicken.
+				</p>
+				
+				<p class="page-intro">
+				    Die angezeigten Informationen helfen Ihnen, die Netze besser einzuschätzen – insbesondere die Größe, 
+				    die den geschätzten Umfang und das Gewicht des Netzes beschreibt. Zusätzlich finden Sie hier, 
+				    sofern die Meldung nicht anonym erfolgte, auch die Angaben der Person, die das Netz gemeldet hat.
+				</p>
+				
+				<p style="margin-bottom: 20px;">
+				    Vielen Dank, dass Sie sich die Mühe gemacht haben, ein oder mehrere Netze zu bergen! 
+				    Ihre Rückmeldung wird sehr geschätzt, da sie dazu beiträgt, einen aktuellen Überblick über alle zu bergenden 
+				    Geisternetze zu behalten und die Koordination der Bergungen zu erleichtern.
+				</p>
                 <h:form id="geborgenForm">
 
                     <!-- Button Bergung eintragen -->
@@ -60,7 +78,7 @@
 
         <h:panelGroup rendered="#{!loginBean.loggedIn}">
             <div class="page-container">
-                <h3 class="home-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h3>
+                <h2 class="page-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h2>
                 <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary">
                     <!-- Weiterleitung zurück zur aktuellen Seite nach Login -->
                 	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />

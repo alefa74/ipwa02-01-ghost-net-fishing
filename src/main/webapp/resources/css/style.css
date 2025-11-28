@@ -90,10 +90,10 @@ main {
     min-width: 250px;
 }
 
-/* ==================== STARTSEITE ==================== */
+/* ==================== GENERELL ==================== */
 
 /* Überschrift zentriert und in Hausfarbe */
-.home-title {
+.page-title {
 	text-align: center;
 	color: #003b6d;
 	margin-bottom: 2rem;
@@ -101,7 +101,7 @@ main {
 }
 
 /* Einleitungstext */
-.home-intro {
+.page-intro {
 	font-size: 1.15rem;
 	text-align: justify;
 	margin-bottom: 3rem;
@@ -109,12 +109,14 @@ main {
 }
 
 /* Abschnittsüberschrift "Was kannst du hier tun?" */
-.home-section-title {
+.page-section-title {
 	text-align: center;
 	color: #003b6d;
 	margin: 4rem 0 2rem;
 	font-size: 1.8rem;
 }
+
+/* ==================== STARTSEITE ==================== */
 
 /* Grid für die fünf Buttons */
 .home-actions-grid {

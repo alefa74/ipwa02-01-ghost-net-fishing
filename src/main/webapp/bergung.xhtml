@@ -15,8 +15,24 @@
         <h:panelGroup rendered="#{loginBean.loggedIn}">
             <div class="page-container">
                 <!-- Überschrift -->
-                <h2 class="home-title">Zu bergende Geisternetze</h2>
+                <h2 class="page-title">Zu bergende Geisternetze</h2>
 
+				<!-- Begleittext -->
+				<p class="page-intro">
+				    Auf dieser Seite sehen Sie zunächst alle Geisternetze, die aktuell gemeldet wurden und noch geborgen werden müssen.
+				    Darunter finden Sie eine Übersicht aller bekannten Geisternetze.
+				</p>
+				
+				<p class="page-intro">
+				    In der oberen Tabelle können Sie erkennen, welche Netze gemeldet wurden. Die Größe gibt Aufschluss über den geschätzten
+				    Umfang und das Gewicht der Netze – von kleineren Küstennetzen (XS) bis hin zu extrem großen Hochsee-Netzen (XL).
+				    In dieser Tabelle sehen Sie außerdem den Status der Netze und das Datum der Meldung.
+				</p>
+				
+				<p style="margin-bottom: 20px;">
+				    Vielen Dank für Ihre Unterstützung bei der Bergung! Jede Meldung, Bearbeitung oder Bergung trägt dazu bei,
+				    dass die Netze sicher geborgen werden, die Umwelt geschützt bleibt und die Übersicht über alle Geisternetze aktuell bleibt.
+				</p>
                 <!-- Tabelle gemeldeter Geisternetze -->
                 <p:dataTable id="gemeldetTable" value="#{netBean.reportedNets}" var="n"
                              paginator="true" rows="10"
@@ -35,7 +51,7 @@
                 </p:dataTable>
                 
             <!-- Tabelle aller Geisternetze -->
-		    <h3 class="home-section-title">Alle Geisternetze:</h3>
+		    <h3 class="page-section-title">Alle Geisternetze:</h3>
 		    <p:dataTable id="netTable" 
 		    			 value="#{netBean.allNets}" 
 		    			 var="n" 
@@ -61,7 +77,7 @@
         <!-- Panel: Nachricht, wenn nicht eingeloggt -->
         <h:panelGroup rendered="#{!loginBean.loggedIn}">
             <div class="page-container">
-                <h3 class="home-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h3>
+                <h2 class="page-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h2>
                 <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary">
                     <!-- Weiterleitung zurück zur aktuellen Seite nach Login -->
                 	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />

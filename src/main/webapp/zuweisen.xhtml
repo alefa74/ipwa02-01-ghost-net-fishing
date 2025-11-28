@@ -7,7 +7,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <!-- Titel für Browser/Tab -->
-    <ui:define name="title">Bergung Geisternetze zuweisen</ui:define>
+    <ui:define name="title">Bergungen Geisternetze zuweisen</ui:define>
 
     <ui:define name="content">
 
@@ -15,8 +15,25 @@
         <h:panelGroup rendered="#{loginBean.loggedIn}">
             <div class="page-container">
                 <!-- Hauptüberschrift -->
-                <h2 class="home-title">Bergungen Geisternetze zuweisen</h2>
-                <p>Hier können Sie sich für die Bergung von Geisternetzen eintragen.</p>
+                <h2 class="page-title">Bergungen Geisternetze zuweisen</h2>
+				<!-- Begleittext -->
+				<p class="page-intro">
+				    Auf dieser Seite sehen Sie alle Geisternetze, die noch zu bergende sind. 
+				    Sie können ein oder mehrere Netze auswählen und diese sich selbst zur Bergung zuweisen, 
+				    indem Sie auf die Schaltfläche <strong>„Bergung zuweisen“</strong> klicken.
+				</p>
+				
+				<p class="page-intro">
+				    Die Liste zeigt wichtige Informationen zu jedem Netz, wie die Größe und den Status. 
+				    Die Größe hilft dabei, den geschätzten Umfang und das Gewicht des Netzes einzuschätzen – von kleineren Küstennetzen (XS) bis hin zu extrem großen Hochsee-Netzen (XL).
+				</p>
+				
+				<p style="margin-bottom: 20px;">
+				    Vielen Dank, dass Sie die Bergung der Netze übernehmen! Damit tragen Sie direkt dazu bei, 
+				    dass die Netze sicher geborgen werden und die Umwelt geschützt bleibt. Jede zugewiesene Bergung 
+				    hilft zudem, die Übersicht über alle Geisternetze aktuell zu halten und die Koordination der Bergungen zu erleichtern.
+				</p>
+
                 
                 <h:form id="zuweisenForm">
 
@@ -63,7 +80,7 @@
          <!-- Anzeige, wenn der Benutzer nicht eingeloggt ist -->
         <h:panelGroup rendered="#{!loginBean.loggedIn}">
             <div class="page-container">
-                <h3 class="home-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h3>
+                <h2 class="page-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h2>
                 <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary">
                     <!-- Weiterleitung zurück zur aktuellen Seite nach Login -->
                 	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />
