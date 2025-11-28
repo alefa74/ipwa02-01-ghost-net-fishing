@@ -112,8 +112,12 @@ public class NetService {
             );
         }
         
-        // Darf nur von angemeldete zugeignet sein
-        // TODO
+     // Darf nur von dem Benutzer geborgen werden, dem das Netz zugeordnet wurde
+        if (fresh.getRecoverer() == null || !fresh.getRecoverer().getId().equals(recoverer.getId())) {
+            throw new IllegalArgumentException(
+                    "Sie dürfen dieses Netz nicht bergen, da es Ihnen nicht zugeordnet wurde."
+            );
+        }
 
         // Alles OK? Dann zuordnen
         Status geborgen = statusService.findByName("GEBORGEN");
