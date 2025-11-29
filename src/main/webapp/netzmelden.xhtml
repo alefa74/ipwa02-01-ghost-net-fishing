@@ -32,9 +32,10 @@
 			    Wenn Sie die Option „anonym“ wählen, werden Ihre persönlichen Angaben
 			    automatisch gelöscht und die entsprechenden Felder deaktiviert. Wenn Sie jedoch Ihren Namen und Ihre
 			    Telefonnummer angeben, erleichtert dies Rückfragen und die weitere Koordination der Bergung.
+			    Falls Sie eingeloggt sind, werden diese automatisch ausgefüllt.
 			</p>
 			
-			<p style="margin-bottom: 20px;">
+			<p class="page-intro">
 			    Nachdem alle notwendigen Angaben gemacht wurden, können Sie das Netz über die Schaltfläche
 			    <strong>„Speichern“</strong> melden.
 			</p>
@@ -98,8 +99,8 @@
 					<p:inputText id="reporterFirstName" 
 								 value="#{netBean.reporter.firstName}" 
 								 placeholder="Optional" 
-								 disabled="#{netBean.anonymous}" 
-								 required="#{!netBean.anonymous}" 
+								 disabled="#{netBean.anonymous or loginBean.loggedIn}" 
+								 required="#{!netBean.anonymous and !loginBean.loggedIn}" 
 								 requiredMessage="Vorname erforderlich bei nicht-anonymer Meldung" />
 					<p:message for="reporterFirstName" display="text" />
 					
@@ -107,8 +108,8 @@
 					<p:inputText id="reporterLastName" 
 								 value="#{netBean.reporter.lastName}" 
 								 placeholder="Optional"
-								 disabled="#{netBean.anonymous}" 
-								 required="#{!netBean.anonymous}" 
+								 disabled="#{netBean.anonymous or loginBean.loggedIn}" 
+								 required="#{!netBean.anonymous and !loginBean.loggedIn}" 
 								 requiredMessage="Nachname erforderlich bei nicht-anonymer Meldung" />
 					<p:message for="reporterLastName" display="text" />
 					
@@ -116,8 +117,8 @@
 					<p:inputText id="reporterPhone" 
 								 value="#{netBean.reporter.phone}" 
 								 placeholder="Optional"
-								 disabled="#{netBean.anonymous}" 
-								 required="#{!netBean.anonymous}" 
+								 disabled="#{netBean.anonymous or loginBean.loggedIn}" 
+								 required="#{!netBean.anonymous and !loginBean.loggedIn}" 
 								 requiredMessage="Telefonnummer erforderlich bei nicht-anonymer Meldung">
 					    <f:validator validatorId="phoneValidator" />
 					</p:inputText>

@@ -63,12 +63,27 @@ public class NetBean implements Serializable {
     
 	@PostConstruct
 	public void init() {
+	    // Laden aller Statuswerte aus der Datenbank
 		allStatuses = statusService.getAllStatuses();
+	    // Laden aller Personentypen
 		allPersonTypes = personTypeService.getAllPersonTypes();
+	    // Initialisieren der verschiedenen Tabellenansichten
 		allNets = NetView.ALL.createModel(netService);
 		reportedNets = NetView.REPORTED.createModel(netService);
 		myAssignedNets = NetView.MY_ASSIGNED.createModel(netService, loginBean);
 		availableNets = NetView.AVAILABLE.createModel(netService);
+
+	    // Automatische Befüllung der Melderdaten, falls der Benutzer eingeloggt ist. 
+	    if (loginBean != null && loginBean.isLoggedIn() && loginBean.getPerson() != null) {
+	        Person p = loginBean.getPerson();
+
+	        reporter.setFirstName(p.getFirstName());
+	        reporter.setLastName(p.getLastName());
+	        reporter.setPhone(p.getPhone());
+
+	        anonymous = false;  // Eingeloggt → Melder kann nicht anonym sein
+	    }
+	
 	}
 
 	private enum NetView {
