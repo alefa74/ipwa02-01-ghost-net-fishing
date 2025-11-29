@@ -1,6 +1,7 @@
 package de.iu.ghostnet.dao;
 
 import de.iu.ghostnet.model.Status;
+import de.iu.ghostnet.model.Status.StatusType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -33,7 +34,7 @@ public class StatusDAO {
         return em.find(Status.class, id);
     }
 
-    public Status findByName(String name) {
+    public Status findByName(StatusType name) {
         // Sucht einen Status anhand seines eindeutigen Namens
        return em.createQuery("SELECT s FROM Status s WHERE s.name = :name", Status.class)
                                  .setParameter("name", name)

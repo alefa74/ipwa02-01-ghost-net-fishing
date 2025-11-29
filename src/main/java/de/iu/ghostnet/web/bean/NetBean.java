@@ -92,11 +92,11 @@ public class NetBean implements Serializable {
         		(ns, lb) -> ns.getAll()),
         // Liefert nur gemeldete Netze (Status GEMELDET)
         REPORTED("Reported Nets", 
-        		(ns, lb) -> ns.getAllByStatus("GEMELDET")),
+        		(ns, lb) -> ns.getAllByStatus(Status.StatusType.GEMELDET)),
         // Liefert Netze, die dem eingeloggten Benutzer zur Bergung zugewiesen sind
         MY_ASSIGNED("My Assigned Recoveries", 
         		(ns, lb) -> lb != null && lb.getPerson() != null
-        		? ns.getAllAssigned("BERGUNG_BEVORSTEHEND", lb.getPerson().getId())
+        		? ns.getAllAssigned(Status.StatusType.BERGUNG_BEVORSTEHEND, lb.getPerson().getId())
         		: Collections.emptyList()),
         // Liefert Netze, die noch zugewiesen werden können
         AVAILABLE("Available Nets", 
@@ -310,7 +310,7 @@ public class NetBean implements Serializable {
 
             case "status.name":
                 return Comparator.comparing(
-                        n -> n.getStatus() != null ? n.getStatus().getName() : "",
+                        n -> n.getStatus() != null ? n.getStatus().getName().toString() : "",
                         String::compareToIgnoreCase
                 );
 

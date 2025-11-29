@@ -10,13 +10,22 @@ public class Status {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Das Enum, das den tatsächlichen Status repräsentiert
+    public enum StatusType {
+        GEMELDET,
+        BERGUNG_BEVORSTEHEND,
+        GEBORGEN,
+        VERSCHOLLEN
+    }
+
     // Name des Status, muss eindeutig sein
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
-    private String name;
+    private StatusType name;
 
     public Status() {}
 
-    public Status(String name) {
+    public Status(StatusType name) {
         this.name = name;
     }
 
@@ -25,11 +34,11 @@ public class Status {
 		return id;
 	}
 
-	public String getName() {
+	public StatusType getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(StatusType name) {
 		this.name = name;
 	}
 

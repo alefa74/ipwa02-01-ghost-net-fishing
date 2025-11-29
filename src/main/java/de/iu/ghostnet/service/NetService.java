@@ -4,6 +4,7 @@ import de.iu.ghostnet.dao.NetDAO;
 import de.iu.ghostnet.model.Net;
 import de.iu.ghostnet.model.Person;
 import de.iu.ghostnet.model.Status;
+import de.iu.ghostnet.model.Status.StatusType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -32,8 +33,8 @@ public class NetService {
     		net.setSize(sizeService.findById(selectedSizeId));
     	}
 
-    	// Initialstatus "GEMELDET" für neu eingegangene Meldungen
-    	Status gemeldet = statusService.findByName("GEMELDET");
+    	// Initialstatus GEMELDET für neu eingegangene Meldungen
+    	Status gemeldet = statusService.findByName(StatusType.GEMELDET);
     	net.setStatus(gemeldet);
     	
     	// Reporter prüfen: anonym, leer oder bereits existierend?
@@ -80,14 +81,14 @@ public class NetService {
         }
 
         // Nur Netze im Status GEMELDET dürfen zugeordnet werden
-        if (!"GEMELDET".equals(fresh.getStatus().getName())) {
+        if (Status.StatusType.GEMELDET != fresh.getStatus().getName()) {
             throw new IllegalArgumentException(
                     "Das Netz wurde bereits von einer anderen Person zugeordnet."
             );
         }
 
         // Status auf BERGUNG_BEVORSTEHEND setzen und Person zuordnen
-        Status bevorstehend = statusService.findByName("BERGUNG_BEVORSTEHEND");
+        Status bevorstehend = statusService.findByName(StatusType.BERGUNG_BEVORSTEHEND);
 
         fresh.setStatus(bevorstehend);
         fresh.setRecoverer(recoverer);
@@ -110,7 +111,7 @@ public class NetService {
         }
 
         // Nur Netze im Status BERGUNG_BEVORSTEHEND können geborgen werden
-        if (!"BERGUNG_BEVORSTEHEND".equals(fresh.getStatus().getName())) {
+        if (Status.StatusType.BERGUNG_BEVORSTEHEND != fresh.getStatus().getName()) {
             throw new IllegalArgumentException(
                     "Das Netz wurde bereits von einer anderen Person zugeordnet."
             );
@@ -124,7 +125,7 @@ public class NetService {
         }
 
         // Status auf GEBORGEN setzen und Zeitpunkt erfassen
-        Status geborgen = statusService.findByName("GEBORGEN");
+        Status geborgen = statusService.findByName(StatusType.GEBORGEN);
 
         fresh.setStatus(geborgen);
         fresh.setRecoveredAt(LocalDateTime.now());   
@@ -141,19 +142,19 @@ public class NetService {
         }
 
         // Prüfen, ob Netz noch stornierbar ist (nicht geborgen, nicht verschollen)
-        if ("GEBORGEN".equals(fresh.getStatus().getName())) {
+        if (StatusType.GEBORGEN == fresh.getStatus().getName()) {
             throw new IllegalArgumentException(
                     "Das Netz wurde bereits geborgen."
             );
         }
-        if ("VERSCHOLLEN".equals(fresh.getStatus().getName())) {
+        if (StatusType.VERSCHOLLEN == fresh.getStatus().getName()) {
             throw new IllegalArgumentException(
                     "Das Netz wurde bereits als verschollen angemerkt."
             );
         }
         
         // Status auf VERSCHOLLEN setzen und Zeitpunkt erfassen
-        Status verschollen = statusService.findByName("VERSCHOLLEN");
+        Status verschollen = statusService.findByName(StatusType.VERSCHOLLEN);
 
         fresh.setStatus(verschollen);
         fresh.setLostAt(LocalDateTime.now());   
@@ -167,16 +168,16 @@ public class NetService {
         return netDAO.findAll();
     }
 
-    public List<Net> getAllByStatus(String statusName) {
+    public List<Net> getAllByStatus(StatusType statusName) {
         return netDAO.findByStatusName(statusName);
     }
     
-    public List<Net> getAllAssigned(String statusName, Long recovererId) {
+    public List<Net> getAllAssigned(StatusType statusName, Long recovererId) {
     	return netDAO.findByStatusAndPerson(statusName, recovererId);
     }
     
     public List<Net> getAllAvailableNets() {
         // Liefert alle Netze, die entweder gemeldet oder bereits zur Bergung vorgesehen sind
-    	return netDAO.findByStatusName("GEMELDET", "BERGUNG_BEVORSTEHEND");
+    	return netDAO.findByStatusName(StatusType.GEMELDET);
     }
 }

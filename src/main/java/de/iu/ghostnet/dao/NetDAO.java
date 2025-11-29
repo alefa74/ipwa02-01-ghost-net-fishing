@@ -2,6 +2,7 @@ package de.iu.ghostnet.dao;
 
 import de.iu.ghostnet.model.Net;
 import de.iu.ghostnet.model.Status;
+import de.iu.ghostnet.model.Status.StatusType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -36,7 +37,7 @@ public class NetDAO {
 		return query.getSingleResult();    	
     }
 
-    public List<Net> findByStatusName(String statusName) {
+    public List<Net> findByStatusName(StatusType statusName) {
         // Sucht Netze mit einem bestimmten Statusnamen
         return em.createQuery(
                 "SELECT n FROM Net n WHERE n.status.name = :name", Net.class)
@@ -52,7 +53,7 @@ public class NetDAO {
                 .getResultList();
     }
  
-    public List<Net> findByStatusAndPerson(String statusName, Long recovererId) {
+    public List<Net> findByStatusAndPerson(StatusType statusName, Long recovererId) {
         // Filtert Netze nach Status und zugewiesener Bergungsperson
         return em.createQuery(
                 "SELECT n FROM Net n WHERE n.status.name = :name AND n.recoverer.id = :recovererId", Net.class)
