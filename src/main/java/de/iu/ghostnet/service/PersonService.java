@@ -16,10 +16,12 @@ public class PersonService {
     private PersonDAO personDAO;
 
     public void save(Person person) {
+        // Speichert eine neue Person (Melder oder Berger)
         personDAO.save(person);
     }
 
     public List<Person> getAll() {
+        // Holt alle Personen
         return personDAO.findAll();
     }
     
@@ -28,9 +30,11 @@ public class PersonService {
     }
     
     public Person findByDetails(String firstName, String lastName, String phone) {
+        // Sucht eine Person eindeutig anhand ihrer Kontaktdaten
         try {
             return personDAO.findByDetails(firstName, lastName, phone);
         } catch (NoResultException e) {
+            // Falls keine passende Person gefunden wurde
             return null;
         }
     }

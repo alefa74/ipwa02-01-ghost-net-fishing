@@ -2,6 +2,7 @@ package de.iu.ghostnet.service;
 
 import de.iu.ghostnet.dao.StatusDAO;
 import de.iu.ghostnet.model.Status;
+import de.iu.ghostnet.model.Status.StatusType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -14,14 +15,16 @@ public class StatusService {
     private StatusDAO statusDAO;
 
     public List<Status> getAllStatuses() {
+        // Holt alle Statuswerte aus der DB und initialisiert sie beim ersten Start
         List<Status> statuses = statusDAO.findAll();
 
         // INIT
         if (statuses.isEmpty()) {
-            statusDAO.save(new Status("GEMELDET"));
-            statusDAO.save(new Status("BERGUNG_BEVORSTEHEND"));
-            statusDAO.save(new Status("GEBORGEN"));
-            statusDAO.save(new Status("VERSCHOLLEN"));
+            // Initialbefüllung der Status-Tabelle
+            statusDAO.save(new Status(StatusType.GEMELDET));
+            statusDAO.save(new Status(StatusType.BERGUNG_BEVORSTEHEND));
+            statusDAO.save(new Status(StatusType.GEBORGEN));
+            statusDAO.save(new Status(StatusType.VERSCHOLLEN));
             statuses = statusDAO.findAll();
         }
 
@@ -32,7 +35,7 @@ public class StatusService {
         return statusDAO.findById(id);
     }
 
-    public Status findByName(String name) {
+    public Status findByName(StatusType name) {
         return statusDAO.findByName(name);
     }
 }

@@ -9,10 +9,13 @@ import javax.faces.validator.ValidatorException;
 
 @FacesValidator("phoneValidator")
 public class PhoneValidator implements Validator<String> {
+	// Prüft, ob die eingegebene Telefonnummer dem erwarteten Format entspricht
     @Override
     public void validate(FacesContext context, UIComponent component, String value) throws ValidatorException {
         if (value != null && !value.isEmpty()) {
+        	// Erlaubt internationale Nummern mit +, Ziffern, Bindestrichen und Leerzeichen (5–15 Zeichen)
             if (!value.matches("\\+?[0-9\\- ]{5,15}")) {
+            	// Fehlermeldung auslösen, falls Format ungültig ist
                 throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR,
                         "Ungültige Telefonnummer", "Bitte geben Sie eine gültige Telefonnummer ein."));
             }

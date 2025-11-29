@@ -4,6 +4,7 @@ import de.iu.ghostnet.dao.NetDAO;
 import de.iu.ghostnet.model.Net;
 import de.iu.ghostnet.model.Person;
 import de.iu.ghostnet.model.Status;
+import de.iu.ghostnet.model.Status.StatusType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -25,17 +26,18 @@ public class NetService {
     private PersonTypeService personTypeService;
     
     public void reportNewNet(Net net, Person reporter, boolean anonymous, Long selectedSizeId) {
+        // Meldet ein neues Geisternetz und setzt Größe, Status, Reporter und Zeitstempel
 
-    	// Größe setzen
+    	// Größe setzen, falls ausgewählt
     	if (selectedSizeId != null) {
     		net.setSize(sizeService.findById(selectedSizeId));
     	}
 
-    	// Status setzen
-    	Status gemeldet = statusService.findByName("GEMELDET");
+    	// Initialstatus GEMELDET für neu eingegangene Meldungen
+    	Status gemeldet = statusService.findByName(StatusType.GEMELDET);
     	net.setStatus(gemeldet);
     	
-    	// Reporter setzen / validieren
+    	// Reporter prüfen: anonym, leer oder bereits existierend?
 		if (anonymous || (reporter == null) || (isEmpty(reporter.getFirstName()) && isEmpty(reporter.getLastName()) && isEmpty(reporter.getPhone()))) {
 			net.setReporter(null); 
 		} else {
@@ -45,6 +47,7 @@ public class NetService {
 								reporter.getPhone());
 
 			if (existing == null) {
+			    // Neue Person anlegen, wenn noch nicht vorhanden
     			reporter.setPersonType(personTypeService.findByName("MELDER"));
 				personService.save(reporter); 
 			} else { 
@@ -53,7 +56,7 @@ public class NetService {
 			net.setReporter(reporter);
 		}
     	
-		// Zeitstempel setzen
+		// Zeitpunkt der Meldung setzen
     	net.setReportedAt(LocalDateTime.now());
     	
     	// Speichern
@@ -65,26 +68,27 @@ public class NetService {
 	}
 
     public void assignNetForRecovery(Net net, Person recoverer) {
+    	// Prüfen, ob ein Benutzer eingeloggt ist
         if (recoverer == null) {
             throw new IllegalArgumentException("Es ist kein Benutzer eingeloggt.");
         }
 
-        // Net aus der DB erneut laden, um Race Conditions zu vermeiden
+        // Net erneut laden, um parallele Änderungen zu vermeiden
         Net fresh = netDAO.findById(net.getId());
 
         if (fresh == null) {
             throw new IllegalArgumentException("Das ausgewählte Netz existiert nicht mehr.");
         }
 
-        // Darf nur GEMELDET sein
-        if (!"GEMELDET".equals(fresh.getStatus().getName())) {
+        // Nur Netze im Status GEMELDET dürfen zugeordnet werden
+        if (Status.StatusType.GEMELDET != fresh.getStatus().getName()) {
             throw new IllegalArgumentException(
                     "Das Netz wurde bereits von einer anderen Person zugeordnet."
             );
         }
 
-        // Alles OK? Dann zuordnen
-        Status bevorstehend = statusService.findByName("BERGUNG_BEVORSTEHEND");
+        // Status auf BERGUNG_BEVORSTEHEND setzen und Person zuordnen
+        Status bevorstehend = statusService.findByName(StatusType.BERGUNG_BEVORSTEHEND);
 
         fresh.setStatus(bevorstehend);
         fresh.setRecoverer(recoverer);
@@ -94,29 +98,34 @@ public class NetService {
     }
 
     public void reportRecovery(Net net, Person recoverer) {
+    	// Prüfen, ob ein Benutzer eingeloggt ist
         if (recoverer == null) {
             throw new IllegalArgumentException("Es ist kein Benutzer eingeloggt.");
         }
 
-        // Net aus der DB erneut laden, um Race Conditions zu vermeiden
+        // Net erneut laden, um parallele Änderungen zu vermeiden
         Net fresh = netDAO.findById(net.getId());
 
         if (fresh == null) {
             throw new IllegalArgumentException("Das ausgewählte Netz existiert nicht mehr.");
         }
 
-        // Darf nur BERGUNG_BEVORSTEHEND sein
-        if (!"BERGUNG_BEVORSTEHEND".equals(fresh.getStatus().getName())) {
+        // Nur Netze im Status BERGUNG_BEVORSTEHEND können geborgen werden
+        if (Status.StatusType.BERGUNG_BEVORSTEHEND != fresh.getStatus().getName()) {
             throw new IllegalArgumentException(
                     "Das Netz wurde bereits von einer anderen Person zugeordnet."
             );
         }
         
-        // Darf nur von angemeldete zugeignet sein
-        // TODO
+        // Sicherstellen, dass das Netz der aktuellen Person zugeordnet ist
+        if (fresh.getRecoverer() == null || !fresh.getRecoverer().getId().equals(recoverer.getId())) {
+            throw new IllegalArgumentException(
+                    "Sie dürfen dieses Netz nicht bergen, da es Ihnen nicht zugeordnet wurde."
+            );
+        }
 
-        // Alles OK? Dann zuordnen
-        Status geborgen = statusService.findByName("GEBORGEN");
+        // Status auf GEBORGEN setzen und Zeitpunkt erfassen
+        Status geborgen = statusService.findByName(StatusType.GEBORGEN);
 
         fresh.setStatus(geborgen);
         fresh.setRecoveredAt(LocalDateTime.now());   
@@ -125,28 +134,27 @@ public class NetService {
     }
 
     public void cancelNet(Net net) {
-        // Net aus der DB erneut laden, um Race Conditions zu vermeiden
+        // Netz Netz erneut laden, um parallele Änderungen zu vermeiden
         Net fresh = netDAO.findById(net.getId());
 
         if (fresh == null) {
             throw new IllegalArgumentException("Das ausgewählte Netz existiert nicht mehr.");
         }
 
-        // Darf nicht GEBORGEN sein
-        if ("GEBORGEN".equals(fresh.getStatus().getName())) {
+        // Prüfen, ob Netz noch stornierbar ist (nicht geborgen, nicht verschollen)
+        if (StatusType.GEBORGEN == fresh.getStatus().getName()) {
             throw new IllegalArgumentException(
                     "Das Netz wurde bereits geborgen."
             );
         }
-        // Darf nicht VERSCHOLLEN sein
-        if ("VERSCHOLLEN".equals(fresh.getStatus().getName())) {
+        if (StatusType.VERSCHOLLEN == fresh.getStatus().getName()) {
             throw new IllegalArgumentException(
                     "Das Netz wurde bereits als verschollen angemerkt."
             );
         }
         
-        // Alles OK? Dann verschollen
-        Status verschollen = statusService.findByName("VERSCHOLLEN");
+        // Status auf VERSCHOLLEN setzen und Zeitpunkt erfassen
+        Status verschollen = statusService.findByName(StatusType.VERSCHOLLEN);
 
         fresh.setStatus(verschollen);
         fresh.setLostAt(LocalDateTime.now());   
@@ -156,18 +164,20 @@ public class NetService {
 
     
     public List<Net> getAll() {
+        // Holt alle Netzen
         return netDAO.findAll();
     }
 
-    public List<Net> getAllByStatus(String statusName) {
+    public List<Net> getAllByStatus(StatusType statusName) {
         return netDAO.findByStatusName(statusName);
     }
     
-    public List<Net> getAllAssigned(String statusName, Long recovererId) {
+    public List<Net> getAllAssigned(StatusType statusName, Long recovererId) {
     	return netDAO.findByStatusAndPerson(statusName, recovererId);
     }
     
     public List<Net> getAllAvailableNets() {
-    	return netDAO.findByStatusName("GEMELDET", "BERGUNG_BEVORSTEHEND");
+        // Liefert alle Netze, die entweder gemeldet oder bereits zur Bergung vorgesehen sind
+    	return netDAO.findByStatusName(StatusType.GEMELDET);
     }
 }

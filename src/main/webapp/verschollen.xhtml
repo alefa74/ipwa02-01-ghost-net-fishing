@@ -6,32 +6,53 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <ui:define name="title">Eigene zu bergende Geisternetze</ui:define>
+	<!-- Seite zur Meldung von verschollenen Geisternetzen -->
+    <ui:define name="title">Meldung von verschollen Geisternetze</ui:define>
 
     <ui:define name="content">
 
         <h:panelGroup >
             <div class="page-container">
-                <h2 class="home-title">Eigene zu bergende Geisternetze</h2>
+                <!-- Hauptüberschrift -->
+                <h2 class="page-title">Meldung von verschollen Geisternetze</h2>
                 
+                  <!-- Begleittext -->
+                <p class="page-intro">
+                    Auf dieser Seite können Sie Geisternetze als <strong>verschollen</strong> markieren.
+                    Wählen Sie dazu eines oder mehrere Netze aus der Liste aus und bestätigen Sie die Aktion.
+                    Dies wird sehr geschätzt, da es uns hilft, einen möglichst klaren und aktuellen Überblick 
+                    über alle zu bergenden Netze zu behalten.
+                </p>
+                <p class="page-intro">
+					Bitte wählen Sie eines oder mehrere Netze aus der Liste aus und markieren Sie diese über den Button als verschollen.
+                </p>
+  
                 <h:form id="verschollenForm">
 
-					<p:commandButton value="Bergung verschollen" 
+                    <!-- Button zum Markieren ausgewählter Netze als verschollen -->
+					<p:commandButton value="Netz verschollen" 
 									 action="#{netBean.cancelNet}"
 									 update="messages, verschollenTable"/>
+                    <!-- Growl für Erfolgs-/Fehlermeldungen -->
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
-	                <p:dataTable id="verschollenTable" var="n" value="#{netBean.verschollenLazyNets}"
+                    <!-- Tabelle der verfügbaren Netze -->
+	                <p:dataTable id="verschollenTable" var="n" value="#{netBean.availableNets}"
 	                             selection="#{netBean.selectedNets}" rowKey="#{n.id}"
 	                             paginator="true" rows="10" selectionPageOnly="false" selectionRowMode="none" callNavigation="true"
 	                             
 	                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 	                             rowsPerPageTemplate="5,10,20,50"
 	                             rowsPerPageDropdown="true"
+	                             resizableColumns="true"
+	                             showGridlines="true"
+	                             scrollable="true"
 	                             emptyMessage="Keine Geisternetze gefunden">
 	                             
+                        <!-- Mehrfachauswahl über Checkbox -->
 						<p:column selectionMode="multiple" selectionBox="true" style="width:10px"/>
 						
+                        <!-- Spaltenanzeige -->
 	                    <p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
 	                    <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
 	                    <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
@@ -40,7 +61,8 @@
 	                    <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
 	                </p:dataTable>
 	                
-					<p:commandButton value="Bergung verschollen" 
+                    <!-- Button unten nochmal zur besseren Usability -->
+					<p:commandButton value="Netz verschollen" 
 									 action="#{netBean.cancelNet}"
 									 update="messages, verschollenTable"/>
 	       		</h:form>

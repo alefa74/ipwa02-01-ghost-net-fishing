@@ -5,56 +5,74 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
+    <!-- Seitentitel für Layout -->
     <ui:define name="title">Startseite</ui:define>
 
     <ui:define name="content">
 
         <div class="page-container">
 
-            <!-- Willkommen Überschrift -->
-            <h2 class="home-title">Willkommen bei Ghost Net Fishing</h2>
+            <!-- Hauptüberschrift -->
+            <h2 class="page-title">Willkommen bei Ghost Net Fishing</h2>
 
             <!-- Einleitungstext -->
-            <p class="home-intro">
+            <p class="page-intro">
                 Jedes Jahr gehen weltweit Hunderttausende von Fischernetzen verloren oder werden zurückgelassen. 
-                Diese <strong>Geisternetze</strong> töten Millionen von Meerestieren und machen ca. 10 % des 
-                Plastikmülls in den Ozeanen aus. Mit dieser Plattform wollen wir gemeinsam etwas dagegen tun!
-            </p>
+                Diese <strong>Geisternetze</strong> töten Millionen von Meerestieren, zerstören Lebensräume und tragen erheblich zur 
+                Verschmutzung der Ozeane bei – sie machen schätzungsweise 10 % des Plastikmülls im Meer aus.
+			</p>
+			
+			<p class="page-intro">
+			    Mit dieser Plattform möchten wir Menschen zusammenbringen, die aktiv etwas gegen Geisternetze unternehmen wollen. 
+			    Hier können Sie melden, verfolgen, zu Bergungen eintragen oder bereits geborgene Netze dokumentieren. Jede Meldung und 
+			    jede Bergung hilft dabei, die Meere sauberer zu machen und das Ökosystem zu schützen.
+			</p>
 
-            <!-- Was kannst du hier tun? -->
-            <h3 class="home-section-title">Was kannst du hier tun?</h3>
+            <!-- Abschnitt: Aktionen, die Benutzer ausführen können -->
+            <h3 class="page-section-title">Was können Sie hier tun?</h3>
+
+			<p class="page-intro">
+			    Sie können Geisternetze melden – anonym oder mit Ihren Kontaktdaten –, den Status bereits gemeldeter Netze einsehen, 
+			    sich für die Bergung von Netzen eintragen und angeben, wenn Sie Netze geborgen haben. Auch das Markieren von verschollenen Netzen 
+			    trägt dazu bei, den Überblick zu behalten.
+			</p>
+			
+			<p class="page-intro">
+			    Jede Aktion, egal ob Meldung, Zuweisung oder Bergung, wird sehr geschätzt. Sie hilft nicht nur beim Überblick über die Netze, 
+			    sondern unterstützt aktiv den Schutz der Umwelt und den Erhalt der Meeresfauna.
+			</p>
 
 			<h:form>
 				<div class="home-actions-grid">
 				
-				    <!-- 1. Geisternetz melden -->
-				    <p:button outcome="/newnets"
+				    <!-- Button: Geisternetz melden -->
+				    <p:button outcome="/netzmelden"
 				              styleClass="ui-button-primary"
 				              icon="pi pi-plus-circle"
 				              iconPos="left"
 				              value="Geisternet melden (anonym möglich)"/>
-				    <!-- 2. Zu bergende Geisternetze ansehen -->
+				    <!-- Button: Zu bergende Geisternetze ansehen -->
 				    <p:button outcome="/bergung"
 				              styleClass="ui-button-success"
 				              icon="pi pi-search"
 				              iconPos="left"
-				              value="Zu bergende Geisternetze ansehen"/>
+				              value="(Zu bergende) Geisternetze ansehen"/>
 				
-				    <!-- 3. Mich für die Bergung eintragen -->
-				    <p:button outcome="/anmeldung"
+				    <!-- Button: Zuweisen der Bergung  -->
+				    <p:button outcome="/zuweisen"
 				              styleClass="ui-button-info"
 				              icon="pi pi-user-plus"
 				              iconPos="left"
 				              value="Mich für die Bergung eintragen"/>
 				
-				    <!-- 4. Geisternetz als geborgen melden -->
+				    <!-- Button: Geisternetz als geborgen melden -->
 				    <p:button outcome="/geborgen"
 				              styleClass="ui-button-warning"
 				              icon="pi pi-check-circle"
 				              iconPos="left"
 				              value="Geisternetz als geborgen melden"/>
 				
-				    <!-- 5. Geisternetz als verschollen melden -->
+				    <!-- Button: Geisternetz als verschollen melden -->
 				    <p:button outcome="/verschollen"
 				              styleClass="ui-button-danger"
 				              icon="pi pi-times-circle"
@@ -65,7 +83,7 @@
 
 			</h:form>
 			
-			<!-- Abschließender Motivationssatz -->
+			<!-- Motivationssatz am Ende -->
             <p class="home-footer-text">
                 <strong>Jede Meldung und jede Bergung zählt</strong> –
                 gemeinsam machen wir die Meere ein Stück sauberer! 🌊

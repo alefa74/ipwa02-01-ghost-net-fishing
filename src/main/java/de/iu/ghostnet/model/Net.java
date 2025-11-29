@@ -16,26 +16,30 @@ public class Net {
     private Double latitude;
     private Double longitude;
 
+	// Größe des Netzes
     @ManyToOne
     @JoinColumn(name = "size_id")
     private Size size;
 
+    // Aktueller Status des Netzes
     @ManyToOne
     @JoinColumn(name = "status_id")
     private Status status;
 
+    // Person, die das Netz ursprünglich gemeldet hat
     @ManyToOne
     @JoinColumn(name = "reporter_id")
     private Person reporter;
 
+    // Person, die für die Bergung zugewiesen wurde
     @ManyToOne
     @JoinColumn(name = "recoverer_id")
     private Person recoverer;
 
-    private LocalDateTime reportedAt;
-    private LocalDateTime assignedAt;
-    private LocalDateTime recoveredAt;
-    private LocalDateTime lostAt;
+    private LocalDateTime reportedAt;		// Zeitpunkt der Meldung
+    private LocalDateTime assignedAt;		// Zeitpunkt der Zuweisung an eine Bergungsperson
+    private LocalDateTime recoveredAt;		// Zeitpunkt der Bergung
+    private LocalDateTime lostAt;			// Zeitpunkt, ab dem das Netz als verloren gilt
     
     public Net () {
     }
@@ -113,11 +117,15 @@ public class Net {
 		this.lostAt = lostAt;
 	}
 	
+	/**
+	 * Gibt das Meldedatum im Format "dd.MM.yyyy" zurück.
+	 * Falls kein Datum vorhanden ist, wird ein Bindestrich ausgegeben.
+	 */
 	public String getFormattedReportedAt() {
         if (reportedAt == null) {
             return "-";
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         return reportedAt.format(formatter);
     }	
 

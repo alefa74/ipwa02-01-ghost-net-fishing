@@ -6,32 +6,62 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <ui:define name="title">Zu bergende Geisternetze</ui:define>
+    <!-- Titel für Browser/Tab -->
+    <ui:define name="title">Bergungen Geisternetze zuweisen</ui:define>
 
     <ui:define name="content">
 
+        <!-- Panel nur sichtbar, wenn der Benutzer eingeloggt ist -->
         <h:panelGroup rendered="#{loginBean.loggedIn}">
             <div class="page-container">
-                <h2 class="home-title">Zu bergende Geisternetze</h2>
-                
-                <h:form id="anmeldungForm">
+                <!-- Hauptüberschrift -->
+                <h2 class="page-title">Bergungen Geisternetze zuweisen</h2>
+				<!-- Begleittext -->
+				<p class="page-intro">
+				    Auf dieser Seite sehen Sie alle Geisternetze, die noch zu bergende sind. 
+				    Sie können ein oder mehrere Netze auswählen und diese sich selbst zur Bergung zuweisen, 
+				    indem Sie auf die Schaltfläche <strong>„Bergung zuweisen“</strong> klicken.
+				</p>
+				
+				<p class="page-intro">
+				    Die Liste zeigt wichtige Informationen zu jedem Netz, wie die Größe und den Status. 
+				    Die Größe hilft dabei, den geschätzten Umfang und das Gewicht des Netzes einzuschätzen – von kleineren Küstennetzen (XS) bis hin zu extrem großen Hochsee-Netzen (XL).
+				</p>
+				
+				<p style="margin-bottom: 20px;">
+				    Vielen Dank, dass Sie die Bergung der Netze übernehmen! Damit tragen Sie direkt dazu bei, 
+				    dass die Netze sicher geborgen werden und die Umwelt geschützt bleibt. Jede zugewiesene Bergung 
+				    hilft zudem, die Übersicht über alle Geisternetze aktuell zu halten und die Koordination der Bergungen zu erleichtern.
+				</p>
 
-					<p:commandButton value="Bergung zueignen" 
+                
+                <h:form id="zuweisenForm">
+
+                    <!-- Button zum Zuweisen oberhalb der Tabelle -->
+					<p:commandButton value="Bergung zuweisen" 
 									 action="#{netBean.assignNetForRecovery}"
-									 update="messages, anzumeldenTable"/>
+									 update="messages, zuweisenTable"/>
+
+                    <!-- Growl für Erfolg/Meldungen -->
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
-	                <p:dataTable id="anzumeldenTable" var="n" value="#{netBean.gemeldetLazyNets}"
+                    <!-- Tabelle der noch zu bergenden Netze -->
+	                <p:dataTable id="zuweisenTable" var="n" value="#{netBean.reportedNets}"
 	                             selection="#{netBean.selectedNets}" rowKey="#{n.id}"
 	                             paginator="true" rows="10" selectionPageOnly="false" selectionRowMode="none" callNavigation="true"
 	                             
 	                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 	                             rowsPerPageTemplate="5,10,20,50"
 	                             rowsPerPageDropdown="true"
+	                             resizableColumns="true"
+	                             showGridlines="true"
+	                             scrollable="true"
 	                             emptyMessage="Keine Geisternetze gefunden">
 	                             
+                        <!-- Spalte für Mehrfachauswahl -->
 						<p:column selectionMode="multiple" selectionBox="true" style="width:10px"/>
 						
+                        <!-- Daten-Spalten -->
 	                    <p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
 	                    <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
 	                    <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
@@ -40,17 +70,20 @@
 	                    <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
 	                </p:dataTable>
 	                
-					<p:commandButton value="Bergung zueignen" 
+                    <!-- Button zum Zuweisen unterhalb der Tabelle -->
+					<p:commandButton value="Bergung zuweisen" 
 									 action="#{netBean.assignNetForRecovery}"
-									 update="messages, anzumeldenTable"/>
+									 update="messages, zuweisenTable"/>
 	       		</h:form>
             </div>
         </h:panelGroup>
 
+         <!-- Anzeige, wenn der Benutzer nicht eingeloggt ist -->
         <h:panelGroup rendered="#{!loginBean.loggedIn}">
             <div class="page-container">
-                <h3 class="home-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h3>
+                <h2 class="page-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h2>
                 <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary">
+                    <!-- Weiterleitung zurück zur aktuellen Seite nach Login -->
                 	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />
                 </p:button>
             </div>

@@ -6,32 +6,60 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+	<!-- Seite zum Eintragen geborgener Geisternetze -->
     <ui:define name="title">Eigene zu bergende Geisternetze</ui:define>
 
     <ui:define name="content">
 
+        <!-- Panel: nur sichtbar, wenn eingeloggt -->
         <h:panelGroup rendered="#{loginBean.loggedIn}">
             <div class="page-container">
-                <h2 class="home-title">Eigene zu bergende Geisternetze</h2>
+                <!-- Überschrift -->
+                <h2 class="page-title">Eigene zu bergende Geisternetze</h2>
                 
+				<!-- Begleittext -->
+				<p class="page-intro">
+				    Auf dieser Seite sehen Sie alle Geisternetze, die Ihnen zur Bergung zugewiesen sind. 
+				    Sie können ein Netz als geborgen eintragen, indem Sie eines oder mehrere Netze aus der Liste auswählen 
+				    und auf die Schaltfläche <strong>„Bergung eintragen“</strong> klicken.
+				</p>
+				
+				<p class="page-intro">
+				    Die angezeigten Informationen helfen Ihnen, die Netze besser einzuschätzen – insbesondere die Größe, 
+				    die den geschätzten Umfang und das Gewicht des Netzes beschreibt. Zusätzlich finden Sie hier, 
+				    sofern die Meldung nicht anonym erfolgte, auch die Angaben der Person, die das Netz gemeldet hat.
+				</p>
+				
+				<p style="margin-bottom: 20px;">
+				    Vielen Dank, dass Sie sich die Mühe gemacht haben, ein oder mehrere Netze zu bergen! 
+				    Ihre Rückmeldung wird sehr geschätzt, da sie dazu beiträgt, einen aktuellen Überblick über alle zu bergenden 
+				    Geisternetze zu behalten und die Koordination der Bergungen zu erleichtern.
+				</p>
                 <h:form id="geborgenForm">
 
+                    <!-- Button Bergung eintragen -->
 					<p:commandButton value="Bergung eintragen" 
 									 action="#{netBean.reportRecovery}"
 									 update="messages, geborgenTable"/>
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
-	                <p:dataTable id="geborgenTable" var="n" value="#{netBean.angemeldetLazyNets}"
+                    <!-- Tabelle der zu bergenden Geisternetze -->
+	                <p:dataTable id="geborgenTable" var="n" value="#{netBean.myAssignedNets}"
 	                             selection="#{netBean.selectedNets}" rowKey="#{n.id}"
 	                             paginator="true" rows="10" selectionPageOnly="false" selectionRowMode="none" callNavigation="true"
 	                             
 	                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 	                             rowsPerPageTemplate="5,10,20,50"
 	                             rowsPerPageDropdown="true"
+	                             resizableColumns="true"
+	                             showGridlines="true"
+	                             scrollable="true"
 	                             emptyMessage="Keine Geisternetze gefunden">
 	                             
+                        <!-- Auswahlspalte -->
 						<p:column selectionMode="multiple" selectionBox="true" style="width:10px"/>
 						
+                        <!-- Daten-Spalten -->
 	                    <p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
 	                    <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
 	                    <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
@@ -41,6 +69,7 @@
 	                    <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
 	                </p:dataTable>
 	                
+                    <!-- Button Bergung eintragen erneut -->
 					<p:commandButton value="Bergung eintragen" 
 									 action="#{netBean.reportRecovery}"
 									 update="messages, geborgenTable"/>
@@ -50,8 +79,9 @@
 
         <h:panelGroup rendered="#{!loginBean.loggedIn}">
             <div class="page-container">
-                <h3 class="home-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h3>
+                <h2 class="page-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h2>
                 <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary">
+                    <!-- Weiterleitung zurück zur aktuellen Seite nach Login -->
                 	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />
                 </p:button>
             </div>

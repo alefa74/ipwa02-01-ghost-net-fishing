@@ -13,6 +13,8 @@ public class Person {
     private String firstName;
     private String lastName;
     private String phone;
+    
+    // Typ der Person
     @ManyToOne
     @JoinColumn(name = "person_type_id")
     private PersonType personType;
@@ -73,6 +75,9 @@ public class Person {
 		this.personType = personType;
 	}
 
+	/**
+	 * Liefert den vollständigen Namen der Person als Kombination aus Vor- und Nachname.
+	 */
 	@Transient
     public String getFullName() {
         return firstName + " " + lastName;

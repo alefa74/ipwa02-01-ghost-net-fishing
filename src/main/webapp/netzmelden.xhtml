@@ -6,17 +6,45 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
+    <!-- Seitentitel für Layout -->
     <ui:define name="title">Geisternetze erfassen</ui:define>
 
     <ui:define name="content">
     	<div class="page-container">
     
-		    <h2 class="home-title">Geisternetze erfassen</h2>
+            <!-- Hauptüberschrift -->
+		    <h2 class="page-title">Geisternetze erfassen</h2>
 		    
+			<!-- Begleittext -->
+			<p class="page-intro">
+			    Auf dieser Seite können Sie ein neues Geisternetz erfassen. Bitte geben Sie die
+			    erforderlichen Geokoordinaten ein, wählen Sie die passende Größe aus und entscheiden Sie,
+    			ob die Meldung anonym erfolgen soll.
+			</p>
+
+			<p class="page-intro">
+				Die Größe hilft dabei, den geschätzten
+				Umfang und das Gewicht des Netzes einzuschätzen – von kleineren Küstennetzen (XS) 
+				bis hin zu extrem großen Hochsee-Netzen (XL).			
+			</p>
+			
+			<p class="page-intro">
+			    Wenn Sie die Option „anonym“ wählen, werden Ihre persönlichen Angaben
+			    automatisch gelöscht und die entsprechenden Felder deaktiviert. Wenn Sie jedoch Ihren Namen und Ihre
+			    Telefonnummer angeben, erleichtert dies Rückfragen und die weitere Koordination der Bergung.
+			    Falls Sie eingeloggt sind, werden diese automatisch ausgefüllt.
+			</p>
+			
+			<p class="page-intro">
+			    Nachdem alle notwendigen Angaben gemacht wurden, können Sie das Netz über die Schaltfläche
+			    <strong>„Speichern“</strong> melden.
+			</p>
+			
+            <!-- Growl für Fehlermeldungen -->
 			<p:growl id="growl" showDetail="true" life="3500" />
 			
 		    <h:form id="netForm">
-		
+                <!-- PanelGrid für Formulareingaben -->	
 		        <h:panelGrid columns="3" cellpadding="5" columnClasses="label-column, input-column, error-column">
 		            <p:outputLabel value="Breitengrad" for="latitude"/>
 					<h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px;">
@@ -64,13 +92,15 @@
 					<p:outputLabel value="" for=""/>
 					                    	
 		        </h:panelGrid>   
+
+                <!-- Persönliche Daten -->
 		        <h:panelGrid id="personalPanel" columns="3" cellpadding="5" columnClasses="label-column, input-column, error-column">
                     <p:outputLabel value="Vorname" for="reporterFirstName"/>
 					<p:inputText id="reporterFirstName" 
 								 value="#{netBean.reporter.firstName}" 
 								 placeholder="Optional" 
-								 disabled="#{netBean.anonymous}" 
-								 required="#{!netBean.anonymous}" 
+								 disabled="#{netBean.anonymous or loginBean.loggedIn}" 
+								 required="#{!netBean.anonymous and !loginBean.loggedIn}" 
 								 requiredMessage="Vorname erforderlich bei nicht-anonymer Meldung" />
 					<p:message for="reporterFirstName" display="text" />
 					
@@ -78,8 +108,8 @@
 					<p:inputText id="reporterLastName" 
 								 value="#{netBean.reporter.lastName}" 
 								 placeholder="Optional"
-								 disabled="#{netBean.anonymous}" 
-								 required="#{!netBean.anonymous}" 
+								 disabled="#{netBean.anonymous or loginBean.loggedIn}" 
+								 required="#{!netBean.anonymous and !loginBean.loggedIn}" 
 								 requiredMessage="Nachname erforderlich bei nicht-anonymer Meldung" />
 					<p:message for="reporterLastName" display="text" />
 					
@@ -87,8 +117,8 @@
 					<p:inputText id="reporterPhone" 
 								 value="#{netBean.reporter.phone}" 
 								 placeholder="Optional"
-								 disabled="#{netBean.anonymous}" 
-								 required="#{!netBean.anonymous}" 
+								 disabled="#{netBean.anonymous or loginBean.loggedIn}" 
+								 required="#{!netBean.anonymous and !loginBean.loggedIn}" 
 								 requiredMessage="Telefonnummer erforderlich bei nicht-anonymer Meldung">
 					    <f:validator validatorId="phoneValidator" />
 					</p:inputText>
@@ -98,29 +128,11 @@
 					<p:commandButton value="Speichern" 
 									 icon="pi pi-save" 
 									 action="#{netBean.reportNewNet}" 
-									 update="netTable netForm growl" 
+									 update="netForm growl" 
 									 process="@form" 
 									 style="margin-top: 10px;"/>
 		        </h:panelGrid>   
 		    </h:form>
-		
-		    <h3 class="home-section-title">Alle Geisternetze:</h3>
-		    <p:dataTable id="netTable" 
-		    			 value="#{netBean.lazyNets}" 
-		    			 var="n" 
-		    			 paginator="true" 
-		    			 rows="10"
-			    		 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-	                     rowsPerPageTemplate="5,10,20,50"
-	                     rowsPerPageDropdown="true"
-	                     emptyMessage="Keine Geisternetze gefunden">
-				<p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
-                <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
-                <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
-                <p:column headerText="Größe" sortBy="#{n.size.name}">#{n.size.name}</p:column>
-                <p:column headerText="Status" sortBy="#{n.status.name}">#{n.status.name}</p:column>
-                <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
-	        </p:dataTable>
 		</div>
     </ui:define>
 </ui:composition>

@@ -10,7 +10,7 @@ public class Size {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    // Eindeutige Bezeichnung der Netzgröße
 	@Column(nullable = false, unique = true)
     private String name;
 

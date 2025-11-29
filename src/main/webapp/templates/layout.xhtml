@@ -4,23 +4,30 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
+	<!-- Hauptlayout der Anwendung: bindet Header, Navigation, Content-Bereich und Footer ein -->
 	<h:head>
+		<!-- Platzhalter für seitenspezifische Titel -->
 	    <title><ui:insert name="title">Ghost Net Fishing</ui:insert></title>
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0" />	    
+		<!-- Globale CSS-Dateien -->
 	    <h:outputStylesheet library="css" name="style.css" />
  	    <h:outputStylesheet library="css" name="footer.css" />
  	</h:head>
 	
 	<h:body>
 	
+		<!-- Gemeinsamer Seitenkopf -->
 	    <ui:include src="/fragments/header.xhtml" />
 	    
+		<!-- Hauptnavigation der Anwendung -->
 	    <ui:include src="/fragments/navigation.xhtml" />
 	
+		<!-- Bereich für die jeweils eingebundene Inhaltsseite -->
 	    <main>
 	        <ui:insert name="content" />
 	    </main>
 	
+		<!-- Gemeinsamer Footer -->
 	    <ui:include src="/fragments/footer.xhtml" />
 	</h:body>
 </html>

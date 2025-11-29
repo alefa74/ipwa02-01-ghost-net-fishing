@@ -15,9 +15,11 @@ public class SizeService {
     private SizeDAO sizeDAO;
 
     public List<Size> getAllSizes() {
+        // Holt alle Netzgrößen; legt Standardgrößen an, falls Tabelle leer ist
     	List<Size> sizes = sizeDAO.findAll();
     	
     	if (sizes.isEmpty()) {
+    		// Standardgrößen zur Erstinitialisierung
             sizeDAO.save(new Size("XS"));
             sizeDAO.save(new Size("S"));
             sizeDAO.save(new Size("M"));

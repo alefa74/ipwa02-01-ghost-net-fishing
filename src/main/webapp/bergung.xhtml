@@ -6,19 +6,50 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+	<!-- Übersicht der zu bergenden Geisternetze -->
     <ui:define name="title">Zu bergende Geisternetze</ui:define>
 
     <ui:define name="content">
 
+        <!-- Panel: nur sichtbar, wenn eingeloggt -->
         <h:panelGroup rendered="#{loginBean.loggedIn}">
             <div class="page-container">
-                <h2 class="home-title">Zu bergende Geisternetze</h2>
+                <!-- Überschrift -->
+                <h2 class="page-title">Zu bergende Geisternetze</h2>
 
-                <p:dataTable id="gemeldetTable" value="#{netBean.gemeldetLazyNets}" var="n"
+				<!-- Begleittext -->
+				<p class="page-intro">
+				    Auf dieser Seite sehen Sie zunächst alle Geisternetze, die aktuell gemeldet wurden und noch geborgen werden müssen.
+				    Darunter finden Sie eine Übersicht aller bekannten Geisternetze.
+				</p>
+				
+				<p class="page-intro">
+				    In der oberen Tabelle können Sie erkennen, welche Netze gemeldet wurden. Die Größe gibt Aufschluss über den geschätzten
+				    Umfang und das Gewicht der Netze – von kleineren Küstennetzen (XS) bis hin zu extrem großen Hochsee-Netzen (XL).
+				    In dieser Tabelle sehen Sie außerdem den Status der Netze und das Datum der Meldung.
+				</p>
+				
+				<p style="margin-bottom: 20px;">
+				    Vielen Dank für Ihre Unterstützung bei der Bergung! Jede Meldung, Bearbeitung oder Bergung trägt dazu bei,
+				    dass die Netze sicher geborgen werden, die Umwelt geschützt bleibt und die Übersicht über alle Geisternetze aktuell bleibt.
+				</p>
+
+				<h:form id="filterForm">
+				    <p:selectOneButton value="#{netBean.viewFilter}">
+				        <f:selectItem itemLabel="Nur gemeldete" itemValue="GEMELDET" />
+				        <f:selectItem itemLabel="Alle Netze" itemValue="ALL" />
+				        <p:ajax listener="#{netBean.onViewFilterChange}" update="filterTable" />
+				    </p:selectOneButton>
+
+                <!-- Tabelle gemeldeter Geisternetze -->
+                <p:dataTable id="filterTable" value="#{netBean.filteredNets}" var="n"
                              paginator="true" rows="10"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,20,50"
                              rowsPerPageDropdown="true"
+                             resizableColumns="true"
+                             showGridlines="true"
+                             scrollable="true"
                              emptyMessage="Keine Geisternetze gefunden">
                     <p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
                     <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
@@ -27,13 +58,16 @@
                     <p:column headerText="Status" sortBy="#{n.status.name}">#{n.status.name}</p:column>
                     <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
                 </p:dataTable>
+				</h:form>
             </div>
         </h:panelGroup>
 
+        <!-- Panel: Nachricht, wenn nicht eingeloggt -->
         <h:panelGroup rendered="#{!loginBean.loggedIn}">
             <div class="page-container">
-                <h3 class="home-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h3>
+                <h2 class="page-section-title">Sie müssen sich anmelden, um diese Seite zu sehen.</h2>
                 <p:button value="Login" outcome="/login" icon="pi pi-sign-in" styleClass="ui-button-primary">
+                    <!-- Weiterleitung zurück zur aktuellen Seite nach Login -->
                 	<f:param name="redirectTo" value="#{request.requestURI.substring(request.contextPath.length())}" />
                 </p:button>
             </div>
