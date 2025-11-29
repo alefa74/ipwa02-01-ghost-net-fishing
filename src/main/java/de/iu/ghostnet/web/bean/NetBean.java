@@ -49,6 +49,7 @@ public class NetBean implements Serializable {
     private LazyDataModel<Net> reportedNets;
     private LazyDataModel<Net> myAssignedNets;
     private LazyDataModel<Net> availableNets;
+    private LazyDataModel<Net> filteredNets;
     
     private Long selectedSizeId;    
     private Net net = new Net();
@@ -59,6 +60,7 @@ public class NetBean implements Serializable {
     
     private Person reporter = new Person();
     private boolean anonymous;
+    private String viewFilter = Status.StatusType.GEMELDET.name();
 
     
 	@PostConstruct
@@ -72,6 +74,7 @@ public class NetBean implements Serializable {
 		reportedNets = NetView.REPORTED.createModel(netService);
 		myAssignedNets = NetView.MY_ASSIGNED.createModel(netService, loginBean);
 		availableNets = NetView.AVAILABLE.createModel(netService);
+		filteredNets = reportedNets;
 
 	    // Automatische Befüllung der Melderdaten, falls der Benutzer eingeloggt ist. 
 	    if (loginBean != null && loginBean.isLoggedIn() && loginBean.getPerson() != null) {
@@ -157,6 +160,10 @@ public class NetBean implements Serializable {
 		return availableNets;
 	}
 
+	public LazyDataModel<Net> getFilteredNets() {
+		return filteredNets;
+	}
+
 	public LazyDataModel<Net> getAllNets() {
 		return allNets;
 	}
@@ -177,7 +184,15 @@ public class NetBean implements Serializable {
 		this.anonymous = anonymous;
 	}
 
-    public List<Size> getAllSizes() {
+    public String getViewFilter() {
+		return viewFilter;
+	}
+
+	public void setViewFilter(String viewFilter) {
+		this.viewFilter = viewFilter;
+	}
+
+	public List<Size> getAllSizes() {
     	if (allSizes == null) {
     		allSizes = sizeService.getAllSizes();
     		Collections.sort(allSizes, Comparator.comparing(Size::getId));
@@ -495,4 +510,24 @@ public class NetBean implements Serializable {
         allNets = NetView.ALL.createModel(netService);
         reportedNets = NetView.REPORTED.createModel(netService);
     }
+	
+	public void onViewFilterChange() {
+		System.out.println("onViewFilterChange viewFilter = " + viewFilter);
+		Status.StatusType filterEnum;
+		
+		// Wenn ALL angegeben wird, dann gibt es ein Exception
+		try {
+			filterEnum = Status.StatusType.valueOf(viewFilter);			
+		} catch (IllegalArgumentException e) {
+			filteredNets = allNets;
+			return;
+		}
+		
+	    if (filterEnum == Status.StatusType.GEMELDET) {
+	        filteredNets = reportedNets;
+	    } else {
+	        filteredNets = allNets;
+	    }
+	}
+	
 }

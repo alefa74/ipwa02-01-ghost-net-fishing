@@ -125,7 +125,7 @@ public class Net {
         if (reportedAt == null) {
             return "-";
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         return reportedAt.format(formatter);
     }	
 

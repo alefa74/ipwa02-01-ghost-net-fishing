@@ -33,8 +33,16 @@
 				    Vielen Dank für Ihre Unterstützung bei der Bergung! Jede Meldung, Bearbeitung oder Bergung trägt dazu bei,
 				    dass die Netze sicher geborgen werden, die Umwelt geschützt bleibt und die Übersicht über alle Geisternetze aktuell bleibt.
 				</p>
+
+				<h:form id="filterForm">
+				    <p:selectOneButton value="#{netBean.viewFilter}">
+				        <f:selectItem itemLabel="Nur gemeldete" itemValue="GEMELDET" />
+				        <f:selectItem itemLabel="Alle Netze" itemValue="ALL" />
+				        <p:ajax listener="#{netBean.onViewFilterChange}" update="filterTable" />
+				    </p:selectOneButton>
+
                 <!-- Tabelle gemeldeter Geisternetze -->
-                <p:dataTable id="gemeldetTable" value="#{netBean.reportedNets}" var="n"
+                <p:dataTable id="filterTable" value="#{netBean.filteredNets}" var="n"
                              paginator="true" rows="10"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,20,50"
@@ -50,29 +58,7 @@
                     <p:column headerText="Status" sortBy="#{n.status.name}">#{n.status.name}</p:column>
                     <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
                 </p:dataTable>
-	                
-	            <!-- Tabelle aller Geisternetze -->
-			    <h3 class="page-section-title">Alle Geisternetze:</h3>
-			    <p:dataTable id="netTable" 
-			    			 value="#{netBean.allNets}" 
-			    			 var="n" 
-			    			 paginator="true" 
-			    			 rows="10"
-				    		 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-		                     rowsPerPageTemplate="5,10,20,50"
-		                     rowsPerPageDropdown="true"
-		                     resizableColumns="true"
-		                     showGridlines="true"
-                             scrollable="true"
-		                     emptyMessage="Keine Geisternetze gefunden">
-					<p:column headerText="ID" sortBy="#{n.id}">#{n.id}</p:column>
-	                <p:column headerText="Latitude" sortBy="#{n.latitude}">#{n.latitude}</p:column>
-	                <p:column headerText="Longitude" sortBy="#{n.longitude}">#{n.longitude}</p:column>
-	                <p:column headerText="Größe" sortBy="#{n.size.name}">#{n.size.name}</p:column>
-	                <p:column headerText="Status" sortBy="#{n.status.name}">#{n.status.name}</p:column>
-	                <p:column headerText="Gemeldet" sortBy="#{n.reportedAt}">#{n.formattedReportedAt}</p:column>
-		        </p:dataTable>
-	                
+				</h:form>
             </div>
         </h:panelGroup>
 
