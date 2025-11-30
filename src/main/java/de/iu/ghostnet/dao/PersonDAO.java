@@ -41,4 +41,11 @@ public class PersonDAO {
             .getSingleResult();
     }
 
+    public List<Person> findAllRecoverers() {
+        // Sucht Personen anhand von Type
+        return em.createQuery(
+        		"SELECT p FROM Person p WHERE p.personType.name = :name", Person.class)
+        	.setParameter("name", "BERGER")
+        	.getResultList();
+    }
 }

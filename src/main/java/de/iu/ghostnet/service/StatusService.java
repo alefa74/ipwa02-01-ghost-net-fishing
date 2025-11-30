@@ -25,6 +25,8 @@ public class StatusService {
             statusDAO.save(new Status(StatusType.BERGUNG_BEVORSTEHEND));
             statusDAO.save(new Status(StatusType.GEBORGEN));
             statusDAO.save(new Status(StatusType.VERSCHOLLEN));
+            
+            System.out.println("[INIT] Status angelegt: GEMELDET, BERGUNG_BEVORSTEHEND, GEBORGEN, VERSCHOLLEN");
             statuses = statusDAO.findAll();
         }
 

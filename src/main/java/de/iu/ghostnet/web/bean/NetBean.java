@@ -6,6 +6,7 @@ import de.iu.ghostnet.model.Size;
 import de.iu.ghostnet.model.Status;
 import de.iu.ghostnet.model.PersonType;
 import de.iu.ghostnet.service.NetService;
+import de.iu.ghostnet.service.PersonService;
 import de.iu.ghostnet.service.SizeService;
 import de.iu.ghostnet.service.StatusService;
 import de.iu.ghostnet.service.PersonTypeService;
@@ -44,6 +45,8 @@ public class NetBean implements Serializable {
     private PersonTypeService personTypeService;
     @Inject
     private LoginBean loginBean;
+    @Inject 
+    private PersonService personService;
     
     private LazyDataModel<Net> allNets;
     private LazyDataModel<Net> reportedNets;
@@ -75,6 +78,8 @@ public class NetBean implements Serializable {
 		myAssignedNets = NetView.MY_ASSIGNED.createModel(netService, loginBean);
 		availableNets = NetView.AVAILABLE.createModel(netService);
 		filteredNets = reportedNets;
+		// Initialiesieren von Tabel 
+		personService.init();
 
 	    // Automatische Befüllung der Melderdaten, falls der Benutzer eingeloggt ist. 
 	    if (loginBean != null && loginBean.isLoggedIn() && loginBean.getPerson() != null) {
@@ -86,7 +91,6 @@ public class NetBean implements Serializable {
 
 	        anonymous = false;  // Eingeloggt → Melder kann nicht anonym sein
 	    }
-	
 	}
 
 	private enum NetView {
@@ -474,7 +478,7 @@ public class NetBean implements Serializable {
     }
 	
 	public void cancelNet() {
-		// Markiert ausgewählte Netze als verschollen (Abbruch der Meldung)
+		// Sicherstellen, dass mindestens ein Netz ausgewählt ist
         if (selectedNets == null || selectedNets.isEmpty()) {
             FacesMessage msg = new FacesMessage(
             		FacesMessage.SEVERITY_WARN,
@@ -488,7 +492,7 @@ public class NetBean implements Serializable {
     	
         for (Net net: selectedNets) {
         	try {
-        		netService.cancelNet(net);
+        		netService.cancelNet(net, reporter);
         		successCount ++;
         	} catch (IllegalArgumentException ex) {
                 // Fehler für dieses Netz anzeigen
@@ -512,7 +516,6 @@ public class NetBean implements Serializable {
     }
 	
 	public void onViewFilterChange() {
-		System.out.println("onViewFilterChange viewFilter = " + viewFilter);
 		Status.StatusType filterEnum;
 		
 		// Wenn ALL angegeben wird, dann gibt es ein Exception

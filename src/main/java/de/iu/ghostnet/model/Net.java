@@ -36,6 +36,11 @@ public class Net {
     @JoinColumn(name = "recoverer_id")
     private Person recoverer;
 
+    // Person, die meldet, dass das Netz verschollen ist
+    @ManyToOne
+    @JoinColumn(name = "missing_reporter_id")
+    private Person missingReporter;
+
     private LocalDateTime reportedAt;		// Zeitpunkt der Meldung
     private LocalDateTime assignedAt;		// Zeitpunkt der Zuweisung an eine Bergungsperson
     private LocalDateTime recoveredAt;		// Zeitpunkt der Bergung
@@ -92,6 +97,14 @@ public class Net {
 	public void setRecoverer(Person recoverer) {
 		this.recoverer = recoverer;
 	}
+	public Person getMissingReporter() {
+		return missingReporter;
+	}
+
+	public void setMissingReporter(Person missingReporter) {
+		this.missingReporter = missingReporter;
+	}
+
 	public LocalDateTime getReportedAt() {
 		return reportedAt;
 	}

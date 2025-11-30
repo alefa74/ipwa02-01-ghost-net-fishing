@@ -14,7 +14,26 @@ public class PersonService {
 
     @Inject
     private PersonDAO personDAO;
+    @Inject
+    private PersonTypeService personTypeService;
 
+    public void init() {
+        // Kontrolliere ob schon ein BERGER da ist
+        List<Person> recoverers = personDAO.findAllRecoverers();
+
+        if (recoverers == null || recoverers.isEmpty()) {
+            Person defaultRecoverer = new Person();
+            defaultRecoverer.setFirstName("neue");
+            defaultRecoverer.setLastName("Berger");
+            defaultRecoverer.setPhone("12345");
+            defaultRecoverer.setPersonType(personTypeService.findByName("BERGER"));
+
+            personDAO.save(defaultRecoverer);
+
+            System.out.println("[INIT] Standard-Berger angelegt: neue Berger (12345)");
+        }
+    }
+    
     public void save(Person person) {
         // Speichert eine neue Person (Melder oder Berger)
         personDAO.save(person);

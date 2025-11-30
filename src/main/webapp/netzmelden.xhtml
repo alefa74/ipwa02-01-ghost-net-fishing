@@ -98,7 +98,7 @@
                     <p:outputLabel value="Vorname" for="reporterFirstName"/>
 					<p:inputText id="reporterFirstName" 
 								 value="#{netBean.reporter.firstName}" 
-								 placeholder="Optional" 
+								 placeholder="#{(!netBean.anonymous and !loginBean.loggedIn) ? 'Pflichtfeld' : 'Nicht bearbeitbar'}" 
 								 disabled="#{netBean.anonymous or loginBean.loggedIn}" 
 								 required="#{!netBean.anonymous and !loginBean.loggedIn}" 
 								 requiredMessage="Vorname erforderlich bei nicht-anonymer Meldung" />
@@ -107,7 +107,7 @@
 					<p:outputLabel value="Nachname" for="reporterLastName"/>
 					<p:inputText id="reporterLastName" 
 								 value="#{netBean.reporter.lastName}" 
-								 placeholder="Optional"
+								 placeholder="#{(!netBean.anonymous and !loginBean.loggedIn) ? 'Pflichtfeld' : 'Nicht bearbeitbar'}"
 								 disabled="#{netBean.anonymous or loginBean.loggedIn}" 
 								 required="#{!netBean.anonymous and !loginBean.loggedIn}" 
 								 requiredMessage="Nachname erforderlich bei nicht-anonymer Meldung" />
@@ -116,7 +116,7 @@
 					<p:outputLabel value="Telefonnummer" for="reporterPhone"/>
 					<p:inputText id="reporterPhone" 
 								 value="#{netBean.reporter.phone}" 
-								 placeholder="Optional"
+								 placeholder="#{(!netBean.anonymous and !loginBean.loggedIn) ? 'Pflichtfeld' : 'Nicht bearbeitbar'}"
 								 disabled="#{netBean.anonymous or loginBean.loggedIn}" 
 								 required="#{!netBean.anonymous and !loginBean.loggedIn}" 
 								 requiredMessage="Telefonnummer erforderlich bei nicht-anonymer Meldung">

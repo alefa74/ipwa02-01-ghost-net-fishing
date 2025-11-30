@@ -25,6 +25,8 @@ public class SizeService {
             sizeDAO.save(new Size("M"));
             sizeDAO.save(new Size("L"));
             sizeDAO.save(new Size("XL"));
+            
+            System.out.println("[INIT] Größen angelegt: XS, S, M, L, XL");
             sizes = sizeDAO.findAll(); 
     	}
     	
