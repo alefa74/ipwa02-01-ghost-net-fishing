@@ -29,10 +29,42 @@
   
                 <h:form id="verschollenForm">
 
+	                <!-- Persönliche Daten -->
+			        <h:panelGrid id="personalPanel" columns="3" cellpadding="5" columnClasses="label-column, input-column, error-column">
+	                    <p:outputLabel value="Vorname" for="reporterFirstName"/>
+						<p:inputText id="reporterFirstName" 
+									 value="#{netBean.reporter.firstName}" 
+									 placeholder="Pflichtfeld"
+									 disabled="#{loginBean.loggedIn}" 
+									 required="#{!loginBean.loggedIn}" 
+									 requiredMessage="Vorname erforderlich" />
+						<p:message for="reporterFirstName" display="text" />
+						
+						<p:outputLabel value="Nachname" for="reporterLastName"/>
+						<p:inputText id="reporterLastName" 
+									 value="#{netBean.reporter.lastName}" 
+									 placeholder="Pflichtfeld"
+									 disabled="#{loginBean.loggedIn}" 
+									 required="#{!loginBean.loggedIn}" 
+									 requiredMessage="Nachname erforderlich" />
+						<p:message for="reporterLastName" display="text" />
+						
+						<p:outputLabel value="Telefonnummer" for="reporterPhone"/>
+						<p:inputText id="reporterPhone" 
+									 value="#{netBean.reporter.phone}" 
+									 placeholder="Pflichtfeld"
+									 disabled="#{loginBean.loggedIn}" 
+									 required="#{!loginBean.loggedIn}" 
+									 requiredMessage="Telefonnummer erforderlich">
+						    <f:validator validatorId="phoneValidator" />
+						</p:inputText>
+						<p:message for="reporterPhone" display="text" />
+			        </h:panelGrid>   
+
                     <!-- Button zum Markieren ausgewählter Netze als verschollen -->
 					<p:commandButton value="Netz verschollen" 
 									 action="#{netBean.cancelNet}"
-									 update="messages, verschollenTable"/>
+									 update="messages, verschollenTable, verschollenForm"/>
                     <!-- Growl für Erfolgs-/Fehlermeldungen -->
 					<p:growl id="messages" showDetail="true" life="3500"/>
 
@@ -64,7 +96,7 @@
                     <!-- Button unten nochmal zur besseren Usability -->
 					<p:commandButton value="Netz verschollen" 
 									 action="#{netBean.cancelNet}"
-									 update="messages, verschollenTable"/>
+									 update="messages, verschollenTable, verschollenForm"/>
 	       		</h:form>
             </div>
         </h:panelGroup>

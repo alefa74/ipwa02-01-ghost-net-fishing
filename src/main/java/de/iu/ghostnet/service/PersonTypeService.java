@@ -20,6 +20,7 @@ public class PersonTypeService {
         	// Standardrollen für Personen
             personTypeDAO.save(new PersonType("MELDER"));
             personTypeDAO.save(new PersonType("BERGER"));
+            personTypeDAO.save(new PersonType("WEGMELDER"));
             types = personTypeDAO.findAll();
         }
         return types;

@@ -1,10 +1,20 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
  	<!-- Kopfbereich der Anwendung mit Titel/Branding -->
     <header style="background:#003b6d; color:white; padding:15px;">
-        <h1>Ghost Net Fishing</h1>
+		<h:link outcome="index" style="text-decoration:none; color:white; display:flex; align-items:center; gap:20px;">
+			<p:graphicImage library="images"
+							name="logo.png"
+							alt="Shea Shepherd – Ghost Nets"
+							class="header-logo" />
+ 			<div>
+				<h1>SHEA SHEPHERD</h1>
+				<p>GHOST NETS</p>
+			</div>
+		</h:link>
     </header>
 
 </ui:composition>

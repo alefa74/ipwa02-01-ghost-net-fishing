@@ -133,7 +133,12 @@ public class NetService {
     	netDAO.save(net);
     }
 
-    public void cancelNet(Net net) {
+    public void cancelNet(Net net, Person recoverer) {
+    	// Prüfen, ob ein Benutzer eingeloggt ist
+        if ((recoverer == null) || (isEmpty(recoverer.getFirstName()) && isEmpty(recoverer.getLastName()) && isEmpty(recoverer.getPhone()))) {
+            throw new IllegalArgumentException("Es ist kein Benutzer eingeloggt.");
+        }
+
         // Netz Netz erneut laden, um parallele Änderungen zu vermeiden
         Net fresh = netDAO.findById(net.getId());
 
@@ -156,7 +161,22 @@ public class NetService {
         // Status auf VERSCHOLLEN setzen und Zeitpunkt erfassen
         Status verschollen = statusService.findByName(StatusType.VERSCHOLLEN);
 
-        fresh.setStatus(verschollen);
+    	// Reporter prüfen: bereits existierend?
+		Person existing = personService.findByDetails(
+							recoverer.getFirstName(), 
+							recoverer.getLastName(), 
+							recoverer.getPhone());
+
+		if (existing == null) {
+			// Neue Person anlegen, wenn noch nicht vorhanden
+			recoverer.setPersonType(personTypeService.findByName("WEGMELDER"));
+			personService.save(recoverer); 
+		} else { 
+			recoverer = existing; 
+		} 
+		net.setMissingReporter(recoverer);
+
+		fresh.setStatus(verschollen);
         fresh.setLostAt(LocalDateTime.now());   
         
     	netDAO.save(net);

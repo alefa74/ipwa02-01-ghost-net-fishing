@@ -474,7 +474,7 @@ public class NetBean implements Serializable {
     }
 	
 	public void cancelNet() {
-		// Markiert ausgewählte Netze als verschollen (Abbruch der Meldung)
+		// Sicherstellen, dass mindestens ein Netz ausgewählt ist
         if (selectedNets == null || selectedNets.isEmpty()) {
             FacesMessage msg = new FacesMessage(
             		FacesMessage.SEVERITY_WARN,
@@ -488,7 +488,7 @@ public class NetBean implements Serializable {
     	
         for (Net net: selectedNets) {
         	try {
-        		netService.cancelNet(net);
+        		netService.cancelNet(net, reporter);
         		successCount ++;
         	} catch (IllegalArgumentException ex) {
                 // Fehler für dieses Netz anzeigen
@@ -512,7 +512,6 @@ public class NetBean implements Serializable {
     }
 	
 	public void onViewFilterChange() {
-		System.out.println("onViewFilterChange viewFilter = " + viewFilter);
 		Status.StatusType filterEnum;
 		
 		// Wenn ALL angegeben wird, dann gibt es ein Exception
